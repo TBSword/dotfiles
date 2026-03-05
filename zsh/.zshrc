@@ -17,6 +17,9 @@ compinit
 # Starship stuff idk it's in the installation tutorial
 eval "$(starship init zsh)"
 
+# zsh-autosuggestions
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 # Show how to access a syncthing panel through a browser
 alias syncthinglocal='syncthing cli show system | grep 127'
 
@@ -65,6 +68,16 @@ alias ipac='sudo pacman -S'
 alias upac='sudo pacman -Syu'
 # pacman delete 
 alias dpac='sudo pacman -Rsn'
+
+# Quick Lazygit
+function lazygit_widget(){
+    lazygit
+    zle reset-prompt
+}
+
+zle -N lazygit_widget
+
+bindkey '^g' lazygit_widget
 
 # Quick Yazi
 function yazi_widget(){
