@@ -93,6 +93,8 @@ bindkey '^y' yazi_widget
 # keyd shortcuts
 alias editkeys='sudo -E nvim /etc/keyd/*'
 alias loadkeys='keyd check && sudo keyd reload'
+# Xtea_log is my journal as a sysadmin
+alias xtealog='nvim /home/explosivitea/Documents/Xtea_log/yeah.sh'
 
 # Colemak reference
 # echo "  +-----------------------------------------------------+ "
