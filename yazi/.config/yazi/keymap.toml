@@ -372,3 +372,14 @@ keymap = [
 	# Filtering
 	{ on = "f", run = "filter", desc = "Filter help items" },
 ]
+
+# close-and-restore-tab
+[[manager.prepend_keymap]]
+on = [ "<C-w>" ]
+run = "plugin close-and-restore-tab close_to_right"
+desc = "Close the current tab and turn to right tab, or quit if it is last tab"
+
+[[manager.prepend_keymap]]
+on = [ "<C-t>" ]
+run = "plugin close-and-restore-tab restore"
+desc = "Restore the closed tab"

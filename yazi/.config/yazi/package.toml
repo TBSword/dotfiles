@@ -1,5 +1,7 @@
-[plugin]
-deps = []
+[[plugin.deps]]
+use = "MasouShizuka/close-and-restore-tab"
+rev = "5047217"
+hash = "bb24648b1f96f1cef8c1543742189aad"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-latte"
