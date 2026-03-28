@@ -1,3 +1,40 @@
+-- yazi-wiki/docs/tips/
+--
+--
+-- show symlink in status bar
+Status:children_add(function(self)
+	local h = self._current.hovered
+	if h and h.link_to then
+		return " -> " .. tostring(h.link_to)
+	else
+		return ""
+	end
+end, 3300, Status.LEFT)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- full-border.yazi
+require("full-border"):setup()
+
+
+-- toggle-pane.yazi
+if os.getenv("NVIM") then
+	require("toggle-pane"):entry("min-preview")
+end
+
+
 -- whoosh.yazi
 --
 --

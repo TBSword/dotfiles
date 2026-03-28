@@ -376,6 +376,67 @@ keymap = [
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# yazi-wiki/docs/tips/
+
+
+# dropping to the shell
+[[mgr.prepend_keymap]]
+on   = "!"
+for  = "unix"
+run  = 'shell "$SHELL" --block'
+desc = "Open $SHELL here"
+
+[[mgr.prepend_keymap]]
+on   = "!"
+for  = "windows"
+run  = 'shell "powershell.exe" --block'
+desc = "Open PowerShell here"
+
+# copy file path while yanking
+[[mgr.prepend_keymap]]
+on  = "y"
+run = [ 'shell -- for path in %s; do echo "file://$path"; done | wl-copy -t text/uri-list', "yank" ]
+
+# go to the root of current git repo
+[[mgr.prepend_keymap]]
+on = [ "g", "r" ]
+run = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # whoosh.yazi
 
 [[mgr.prepend_keymap]]
@@ -449,3 +510,45 @@ on = [ "]", "R" ]
 run = "plugin whoosh rename_by_fzf"
 desc = "Rename bookmark by fzf"
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# toggle-pane.yazi
+[[mgr.prepend_keymap]]
+on   = [ "T", "t" ]
+run  = "plugin toggle-pane min-preview"
+desc = "Show or hide the preview pane"
+
+[[mgr.prepend_keymap]]
+on   = [ "T", "r" ]
+run  = "plugin toggle-pane max-preview"
+desc = "Maximize or restore the preview pane"
+
+# parent-arrow.yazi
+[[mgr.prepend_keymap]]
+on  = "K"
+run = "plugin parent-arrow -1"
+
+[[mgr.prepend_keymap]]
+on  = "J"
+run = "plugin parent-arrow 1"
+
+# confirm-quit.yazi
+[[mgr.prepend_keymap]]
+on  = "q"
+run = "plugin confirm-quit"
