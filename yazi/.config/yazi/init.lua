@@ -35,6 +35,10 @@ if os.getenv("NVIM") then
 end
 
 
+-- sshfs.yazi
+require("sshfs"):setup()
+
+
 -- whoosh.yazi
 --
 --

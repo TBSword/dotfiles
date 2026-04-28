@@ -8,6 +8,16 @@ use = "yazi-rs/plugins:toggle-pane"
 rev = "1962818"
 hash = "4c0260feb50ea2437380690ffc241da7"
 
+[[plugin.deps]]
+use = "XYenon/clipboard"
+rev = "3b96810"
+hash = "13d7eb15a079c735e34124b922322de5"
+
+[[plugin.deps]]
+use = "uhs-robert/sshfs"
+rev = "7ba17a8"
+hash = "f6927372436c780965035310821a40d9"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-latte"
 rev = "9e053d0"

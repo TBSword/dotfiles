@@ -144,8 +144,10 @@ keymap = [
 	{ on = "8", run = "tab_switch 7", desc = "Switch to eighth tab" },
 	{ on = "9", run = "tab_switch 8", desc = "Switch to ninth tab" },
 
-	{ on = "[", run = "tab_switch -1 --relative", desc = "Switch to previous tab" },
-	{ on = "]", run = "tab_switch 1 --relative",  desc = "Switch to next tab" },
+# 	{ on = "[", run = "tab_switch -1 --relative", desc = "Switch to previous tab" },
+# 	{ on = "]", run = "tab_switch 1 --relative",  desc = "Switch to next tab" },
+ 	{ on = "<", run = "tab_switch -1 --relative", desc = "Switch to previous tab" },
+ 	{ on = ">", run = "tab_switch 1 --relative",  desc = "Switch to next tab" },
 
 	{ on = "{", run = "tab_swap -1", desc = "Swap current tab with previous tab" },
 	{ on = "}", run = "tab_swap 1",  desc = "Swap current tab with next tab" },
@@ -410,9 +412,9 @@ run  = 'shell "powershell.exe" --block'
 desc = "Open PowerShell here"
 
 # copy file path while yanking
-[[mgr.prepend_keymap]]
-on  = "y"
-run = [ 'shell -- for path in %s; do echo "file://$path"; done | wl-copy -t text/uri-list', "yank" ]
+# [[mgr.prepend_keymap]]
+# on  = "y"
+# run = [ "shell -- echo %s | xclip -i -selection clipboard -t text/uri-list", "yank" ]
 
 # go to the root of current git repo
 [[mgr.prepend_keymap]]
@@ -552,3 +554,19 @@ run = "plugin parent-arrow 1"
 [[mgr.prepend_keymap]]
 on  = "q"
 run = "plugin confirm-quit"
+
+# clipboard.yazi
+[[mgr.prepend_keymap]]
+on  = "y"
+run = [ "yank", 'plugin clipboard -- --action=copy' ]
+
+[[mgr.prepend_keymap]]
+on  = "<C-p>"
+run = [ 'plugin clipboard -- --action=paste' ]
+
+# sshfs.yazi
+[[mgr.prepend_keymap]]
+on = ["M","s"]
+run = "plugin sshfs -- menu"
+desc = "Open SSHFS options" 
+

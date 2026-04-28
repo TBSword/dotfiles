@@ -49,6 +49,16 @@ v() {
     fi
 }
 
+d() {
+    if systemctl is-active --quiet daed; then
+        sudo systemctl stop daed
+        echo "daed Proxy: OFF"
+    else
+        sudo systemctl start daed
+        echo "daed Proxy: ON"
+    fi
+}
+
 # Enable fzf features
 source ~/fzf.zsh
 
@@ -95,7 +105,20 @@ alias editkeys='sudo -E nvim /etc/keyd/*'
 alias loadkeys='keyd check && sudo keyd reload'
 # Xtea_log is my journal as a sysadmin
 alias xtealog='nvim /home/explosivitea/Documents/Xtea_log/yeah.sh'
+alias nvfu='systemctl hibernate'
 
+alias amalogous=". /home/explosivitea/Desktop/B1/amalogous/logger6.sh"
+alias amasync=". /home/explosivitea/Desktop/B1/amalogous/sync.sh"
+
+function amalogous_widget(){
+    zle -I
+    amalogous < /dev/tty
+    zle reset-prompt
+}
+
+zle -N amalogous_widget
+
+bindkey '^a' amalogous_widget
 # Colemak reference
 # echo "  +-----------------------------------------------------+ "
 # echo "  |             C O L E M A K   L A Y O U T             | "

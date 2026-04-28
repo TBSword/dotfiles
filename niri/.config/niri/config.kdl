@@ -6,6 +6,12 @@
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://yalter.github.io/niri/Configuration:-Input
+
+// $Xtea_log: edit_004
+environment {
+    XMODIFIERS "@im=fcitx"
+}
+spawn-at-startup "fcitx5"
 input {
     keyboard {
         xkb {
@@ -339,12 +345,14 @@ window-rule {
     // block-out-from "screencast"
 }
 
+
 // Example: enable rounded corners for all windows.
 // (This example rule is commented out with a "/-" in front.)
 /-window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
 }
+
 
 // Start Vicinae server.
 // Vicinae is a blatant Raycast copycat.
