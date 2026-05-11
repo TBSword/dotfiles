@@ -27,6 +27,9 @@ vim.opt.showmode = false
 -- 初始化全局变量（可选，autocmd 会覆盖它）
 vim.g.fcitx5state = 1
 
+-- Ctrl+S 保存
+vim.keymap.set({ 'i', 'n', 'v' }, '<C-s>', '<Cmd>w<CR>')
+
 -- 离开插入模式时：记录当前输入法状态，然后关闭输入法
 vim.api.nvim_create_autocmd('InsertLeave', {
     pattern = '*',
@@ -37,5 +40,19 @@ vim.api.nvim_create_autocmd('InsertLeave', {
         vim.g.fcitx5state = state
         -- 关闭输入法（静默执行，忽略输出）
         vim.fn.system('fcitx5-remote -c')
+    end,
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('my.lsp', {}),
+    callback = function(ev)
+        local map = function(mode, lhs, rhs, desc)
+            vim.keymap.set(mode, lhs, rhs, { buffer = ev.buf, desc = desc })
+        end
+        map('n', 'gd',        vim.lsp.buf.definition,    '[G]oto [D]efinition')
+        map('n', 'gr',        vim.lsp.buf.references,     '[G]oto [R]eferences')
+        map('n', 'K',         vim.lsp.buf.hover,          'Hover Documentation')
+        map('n', '<F2>',      vim.lsp.buf.rename,         '[R]e[n]ame')
+        map('n', '<leader>ca', vim.lsp.buf.code_action,   '[C]ode [A]ction')
     end,
 })

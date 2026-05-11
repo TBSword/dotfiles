@@ -10,13 +10,40 @@ return {
         require("mason").setup(opts)
         local registry = require "mason-registry"
 
-        local success, package = pcall(registry.get_package, "lua-language-server")
-        if success and not package:is_installed() then
-            package:install()
+        local servers = {
+            "lua-language-server",
+            "typescript-language-server",
+            "pyright",
+            "jdtls",
+        }
+
+        for _, server in ipairs(servers) do
+            local ok, pkg = pcall(registry.get_package, server)
+            if ok and not pkg:is_installed() then
+                pkg:install()
+            end
         end
 
-        local nvim_lsp = require("mason-lspconfig").get_mappings().package_to_lspconfig["lua-language-server"]
-        vim.lsp.config(nvim_lsp, {})
+        vim.lsp.config("lua_ls", {
+            settings = {
+                Lua = {
+                    runtime = { version = "LuaJIT" },
+                    workspace = {
+                        checkThirdParty = false,
+                        library = { vim.env.VIMRUNTIME },
+                    },
+                },
+            },
+        })
+
+        vim.lsp.enable({
+            "lua_ls",
+            "ts_ls",
+            "pyright",
+            "jdtls",
+            "rust_analyzer",
+            "clangd",
+        })
     end,
 }
 

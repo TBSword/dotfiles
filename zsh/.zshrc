@@ -107,18 +107,30 @@ alias loadkeys='keyd check && sudo keyd reload'
 alias xtealog='nvim /home/explosivitea/Documents/Xtea_log/yeah.sh'
 alias nvfu='systemctl hibernate'
 
-alias amalogous=". /home/explosivitea/Desktop/B1/amalogous/logger6.sh"
-alias amasync=". /home/explosivitea/Desktop/B1/amalogous/sync.sh"
+# android sdk
+export ANDROID_HOME=/opt/android-sdk
+export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 
-function amalogous_widget(){
-    zle -I
-    amalogous < /dev/tty
-    zle reset-prompt
+# ask deepseek in terminal
+ask() {
+    local model="deepseek/deepseek-v4-flash"
+    if [[ $# -eq 0 ]]; then
+        cd /home/explosivitea/t/copilot-ask
+        opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
+    else
+        opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
+    fi
+}
+askx() {
+    local model="deepseek/deepseek-v4-pro"
+    if [[ $# -eq 0 ]]; then
+        cd /home/explosivitea/t/copilot-ask
+        opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
+    else
+        opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
+    fi
 }
 
-zle -N amalogous_widget
-
-bindkey '^a' amalogous_widget
 # Colemak reference
 # echo "  +-----------------------------------------------------+ "
 # echo "  |             C O L E M A K   L A Y O U T             | "
