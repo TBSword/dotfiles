@@ -175,6 +175,9 @@ layout {
         // Color of the ring on the active monitor.
         active-color "#7fc8ff"
 
+        // Gray-mint to dark teal-pine gradient
+        active-gradient from="#8baaa0" to="#253d33" angle=135 relative-to="workspace-view"
+
         // Color of the ring on inactive monitors.
         //
         // The focus ring only draws around the active window, so the only place
@@ -220,8 +223,8 @@ layout {
 
     // You can enable drop shadows for windows.
     shadow {
-        // Uncomment the next line to enable shadows.
-        // on
+        // Uncomment the next line to disable shadows.
+        on
 
         // By default, the shadow draws only around its window, and not behind it.
         // Uncomment this setting to make the shadow draw behind its window.

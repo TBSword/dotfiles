@@ -1,0 +1,5 @@
+timeout 570 'notify-send -u critical -t 10000 "Screen will lock in 30s"'
+timeout 600 'swaylock -f'
+timeout 605 'niri msg action power-off-monitors'
+timeout 900 'systemctl suspend'
+before-sleep 'swaylock -f'

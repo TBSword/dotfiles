@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+    <item label="  Lock">
+        <action name="lock" />
+    </item>
+    <item label="󰒲  Suspend">
+        <action name="suspend" />
+    </item>
+    <item label="󰤁  Hibernate">
+        <action name="hibernate" />
+    </item>
+    <separator />
+    <item label="󰍃  Logout">
+        <action name="logout" />
+    </item>
+    <item label="󰜉  Reboot">
+        <action name="reboot" />
+    </item>
+    <item label="󰐥  Shutdown">
+        <action name="shutdown" />
+    </item>
+</menu>

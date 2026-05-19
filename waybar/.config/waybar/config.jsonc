@@ -1,219 +1,188 @@
 // -*- mode: jsonc -*-
 {
-    // "layer": "top", // Waybar at top layer
-    // "position": "bottom", // Waybar position (top|bottom|left|right)
-    "height": 30, // Waybar height (to be removed for auto height)
-    // "width": 1280, // Waybar width
-    "spacing": 4, // Gaps between modules (4px)
-    // Choose the order of the modules
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 4,
+    "margin-top": 4,
+    "margin-left": 8,
+    "margin-right": 8,
+
     "modules-left": [
-        "sway/workspaces",
-        "sway/mode",
-        "sway/scratchpad",
-        "custom/media"
+        "niri/workspaces",
+        "mpris"
     ],
     "modules-center": [
-        "sway/window"
+        "niri/window"
     ],
     "modules-right": [
-        "mpd",
         "idle_inhibitor",
-        "pulseaudio",
+        "wireplumber",
         "network",
-        "power-profiles-daemon",
         "cpu",
         "memory",
         "temperature",
         "backlight",
-        "keyboard-state",
-        "sway/language",
         "battery",
-        "battery#bat2",
         "clock",
         "tray",
         "custom/power"
     ],
-    // Modules configuration
-    // "sway/workspaces": {
-    //     "disable-scroll": true,
-    //     "all-outputs": true,
-    //     "warp-on-scroll": false,
-    //     "format": "{name}: {icon}",
-    //     "format-icons": {
-    //         "1": "",
-    //         "2": "",
-    //         "3": "",
-    //         "4": "",
-    //         "5": "",
-    //         "urgent": "",
-    //         "focused": "",
-    //         "default": ""
-    //     }
-    // },
-    "keyboard-state": {
-        "numlock": true,
-        "capslock": true,
-        "format": "{name} {icon}",
+
+    // ── niri modules ──────────────────────────────────────────
+
+    "niri/workspaces": {
+        "format": "{icon} {name}",
         "format-icons": {
-            "locked": "",
-            "unlocked": ""
+            "urgent": " ",
+            "focused": " ",
+            "active": " ",
+            "default": " "
+        },
+        "disable-click": false,
+        "all-outputs": false,
+        "current-only": false,
+        "on-click": "activate"
+    },
+
+    "niri/window": {
+        "format": "{title}",
+        "max-length": 80,
+        "separate-outputs": true,
+        "rewrite": {
+            "(.*) - Mozilla Firefox": "  $1",
+            "(.*) - Chromium": "  $1",
+            "(.*) - Google Chrome": "  $1",
+            "(.*) - Nautilus": "  $1",
+            "(.*) - Alacritty": "  $1",
+            "(.*) - kitty": "  $1",
+            "(.*) - foot": "  $1"
         }
     },
-    "sway/mode": {
-        "format": "<span style=\"italic\">{}</span>"
-    },
-    "sway/scratchpad": {
-        "format": "{icon} {count}",
-        "show-empty": false,
-        "format-icons": ["", ""],
-        "tooltip": true,
-        "tooltip-format": "{app}: {title}"
-    },
-    "mpd": {
-        "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
-        "format-disconnected": "Disconnected ",
-        "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ",
-        "unknown-tag": "N/A",
-        "interval": 5,
-        "consume-icons": {
-            "on": " "
-        },
-        "random-icons": {
-            "off": "<span color=\"#f53c3c\"></span> ",
-            "on": " "
-        },
-        "repeat-icons": {
-            "on": " "
-        },
-        "single-icons": {
-            "on": "1 "
-        },
-        "state-icons": {
-            "paused": "",
-            "playing": ""
-        },
-        "tooltip-format": "MPD (connected)",
-        "tooltip-format-disconnected": "MPD (disconnected)"
-    },
-    "idle_inhibitor": {
-        "format": "{icon}",
-        "format-icons": {
-            "activated": "",
-            "deactivated": ""
-        }
-    },
-    "tray": {
-        // "icon-size": 21,
-        "spacing": 10,
-        // "icons": {
-        //   "blueman": "bluetooth",
-        //   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
-        // }
-    },
-    "clock": {
-        // "timezone": "America/New_York",
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format-alt": "{:%Y-%m-%d}"
-    },
+
+    // ── system modules ────────────────────────────────────────
+
     "cpu": {
-        "format": "{usage}% ",
-        "tooltip": false
+        "format": "  {usage}%",
+        "tooltip": false,
+        "interval": 5
     },
+
     "memory": {
-        "format": "{}% "
+        "format": "  {}%",
+        "tooltip": false,
+        "interval": 10
     },
+
     "temperature": {
-        // "thermal-zone": 2,
-        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
         "critical-threshold": 80,
-        // "format-critical": "{temperatureC}°C {icon}",
         "format": "{temperatureC}°C {icon}",
-        "format-icons": ["", "", ""]
+        "format-icons": ["", "", "", "", ""],
+        "interval": 5
     },
+
     "backlight": {
-        // "device": "acpi_video1",
-        "format": "{percent}% {icon}",
+        "format": "{icon}  {percent}%",
         "format-icons": ["", "", "", "", "", "", "", "", ""]
     },
+
     "battery": {
         "states": {
-            // "good": 95,
             "warning": 30,
             "critical": 15
         },
-        "format": "{capacity}% {icon}",
-        "format-full": "{capacity}% {icon}",
-        "format-charging": "{capacity}% ",
-        "format-plugged": "{capacity}% ",
-        "format-alt": "{time} {icon}",
-        // "format-good": "", // An empty format will hide the module
-        // "format-full": "",
-        "format-icons": ["", "", "", "", ""]
+        "format": "{icon} {capacity}%",
+        "format-charging": "{icon} {capacity}%",
+        "format-plugged": "{icon} {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip": true
     },
-    "battery#bat2": {
-        "bat": "BAT2"
-    },
-    "power-profiles-daemon": {
-      "format": "{icon}",
-      "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
-      "tooltip": true,
-      "format-icons": {
-        "default": "",
-        "performance": "",
-        "balanced": "",
-        "power-saver": ""
-      }
-    },
+
     "network": {
-        // "interface": "wlp2*", // (Optional) To force the use of this interface
-        "format-wifi": "{essid} ({signalStrength}%) ",
-        "format-ethernet": "{ipaddr}/{cidr} ",
-        "tooltip-format": "{ifname} via {gwaddr} ",
-        "format-linked": "{ifname} (No IP) ",
-        "format-disconnected": "Disconnected ⚠",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+        "format-wifi": "   {signalStrength}%",
+        "format-ethernet": "󰈀  {ipaddr}",
+        "format-linked": "󰈀  {ifname}",
+        "format-disconnected": "󰤮  Disconnected",
+        "format-alt": "   {essid}",
+        "tooltip-format": "{ifname}\n {ipaddr}/{cidr}\n {frequency} MHz",
+        "on-click": "nm-connection-editor"
     },
-    "pulseaudio": {
-        // "scroll-step": 1, // %, can be a float
-        "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}% {icon} {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
-        "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
+
+    "wireplumber": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "󰝟  Muted",
         "format-icons": {
             "headphone": "",
-            "hands-free": "",
-            "headset": "",
+            "hands-free": "",
+            "headset": "",
             "phone": "",
             "portable": "",
             "car": "",
-            "default": ["", "", ""]
+            "default": ["", "", "󰕾", ""]
         },
-        "on-click": "pavucontrol"
+        "on-click": "pavucontrol",
+        "on-click-right": "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
     },
-    "custom/media": {
-        "format": "{icon} {text}",
-        "return-type": "json",
-        "max-length": 40,
+
+    // ── idle inhibitor ─────────────────────────────────────────
+
+    "idle_inhibitor": {
+        "format": "{icon}",
         "format-icons": {
-            "spotify": "",
-            "default": "🎜"
+            "activated": "󰛔",
+            "deactivated": "󰛕"
         },
-        "escape": true,
-        "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
-        // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
+        "tooltip": true,
+        "tooltip-format-activated": "Idle inhibitor on",
+        "tooltip-format-deactivated": "Idle inhibitor off"
     },
+
+    // ── mpris (auto-hides when nothing playing) ────────────────
+
+    "mpris": {
+        "format": "{player_icon}  {dynamic}",
+        "format-playing": "{player_icon}  {artist} - {title}",
+        "format-paused": "{player_icon}  {status}",
+        "max-length": 45,
+        "player-icons": {
+            "spotify": "󰓇",
+            "firefox": "󰈹",
+            "chromium": "󰊯",
+            "vlc": "󰕼",
+            "mpv": "󰝚",
+            "default": "󰝚"
+        },
+        "status-icons": {
+            "Playing": "󰐊",
+            "Paused": "󰏤",
+            "Stopped": "󰓛"
+        },
+        "dynamic-importance-order": ["title", "artist", "album", "position", "length", "player"],
+        "tooltip-format": "{player}\n{artist} - {album}\n{title}\n{length}",
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next",
+        "interval": 3
+    },
+
+    // ── clock / tray / power ──────────────────────────────────
+
+    "clock": {
+        "format": "󰥔  {:%H:%M}",
+        "format-alt": "󰃭  {:%Y-%m-%d}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "interval": 30
+    },
+
+    "tray": {
+        "spacing": 8
+    },
+
     "custom/power": {
-        "format" : "⏻ ",
-		"tooltip": false,
-		"menu": "on-click",
-		"menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
-		"menu-actions": {
-			"shutdown": "shutdown",
-			"reboot": "reboot",
-			"suspend": "systemctl suspend",
-			"hibernate": "systemctl hibernate"
-		}
+        "format": "{}",
+        "exec": "echo -n '⏻ '",
+        "interval": "once",
+        "tooltip": false,
+        "on-click": "$HOME/.config/waybar/power.sh",
+        "on-click-right": "niri msg action quit"
     }
 }

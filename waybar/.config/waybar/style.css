@@ -1,0 +1,167 @@
+/* ── Fontaine ──────────────────────────────────────────────── */
+* {
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK SC", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 0;
+}
+
+/* ── Bar ──────────────────────────────────────────────────── */
+window#waybar {
+    background-color: rgba(28, 35, 32, 0.78);
+    border-radius: 10px;
+    color: #d4dcd8;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+}
+
+window#waybar.hidden {
+    opacity: 0;
+}
+
+/* per-app bar tint — solo window */
+window#waybar.empty {
+    background-color: rgba(28, 35, 32, 0.45);
+}
+
+/* ── Buttons (modules) ────────────────────────────────────── */
+button {
+    box-shadow: inset 0 -2px transparent;
+    border: none;
+    border-radius: 8px;
+}
+
+button:hover {
+    background: rgba(139, 170, 160, 0.18);
+    box-shadow: inset 0 -2px rgba(139, 170, 160, 0.5);
+    border: none;
+}
+
+/* ── All modules base padding ─────────────────────────────── */
+#clock,
+#battery,
+#cpu,
+#memory,
+#temperature,
+#backlight,
+#network,
+#wireplumber,
+#mpris,
+#tray,
+#idle_inhibitor {
+    min-width: 16px;
+    padding: 0 12px;
+}
+
+#idle_inhibitor.activated {
+    background-color: rgba(139, 170, 160, 0.35);
+    color: #c8e6d8;
+}
+
+/* ── CPU / Memory / Temperature ───────────────────────────── */
+#cpu {
+    color: #c8e6d8;
+}
+
+#memory {
+    color: #c8e6d8;
+}
+
+#temperature.critical {
+    background-color: rgba(196, 122, 106, 0.35);
+    color: #f0ccc4;
+}
+
+/* ── Network ──────────────────────────────────────────────── */
+#network {
+    min-width: 24px;
+}
+
+#network.disconnected {
+    background-color: rgba(196, 122, 106, 0.30);
+    color: #f0ccc4;
+}
+
+/* ── WirePlumber ──────────────────────────────────────────── */
+#wireplumber.muted {
+    background-color: rgba(196, 122, 106, 0.25);
+    color: rgba(212, 220, 216, 0.45);
+}
+
+#wireplumber.bluetooth {
+    background-color: rgba(106, 171, 142, 0.25);
+}
+
+/* ── Backlight ────────────────────────────────────────────── */
+#backlight {
+    color: #e8dcc4;
+}
+
+/* ── Clock ────────────────────────────────────────────────── */
+#keyboard-state {
+    min-width: 10px;
+    padding: 0 8px;
+}
+
+#keyboard-state > label {
+    padding: 0 2px;
+}
+
+#keyboard-state > label.locked {
+    color: #bce8d4;
+}
+
+/* ── Clock ────────────────────────────────────────────────── */
+#clock {
+    background-color: rgba(139, 170, 160, 0.22);
+    color: #c8e6d8;
+    font-weight: 600;
+}
+
+/* ── Tray ─────────────────────────────────────────────────── */
+#tray {
+    background-color: transparent;
+    padding: 0 8px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: rgba(196, 122, 106, 0.35);
+    border-radius: 6px;
+}
+
+/* ── MPRIS ─────────────────────────────────────────────────── */
+#mpris {
+    background-color: rgba(106, 171, 142, 0.20);
+    color: #bce8d4;
+    min-width: 80px;
+}
+
+/* ── Custom modules ───────────────────────────────────────── */#custom-power {
+    background-color: rgba(37, 61, 51, 0.40);
+    font-size: 15px;
+    padding: 0 12px;
+}
+
+#custom-power:hover {
+    background-color: rgba(196, 122, 106, 0.30);
+    color: #f0ccc4;
+}
+
+/* ── Tooltips ─────────────────────────────────────────────── */
+tooltip {
+    background: rgba(20, 28, 25, 0.94);
+    border: 1px solid rgba(139, 170, 160, 0.3);
+    border-radius: 8px;
+    color: #d4dcd8;
+    padding: 8px 12px;
+}
+
+tooltip label {
+    color: #d4dcd8;
+    font-size: 12px;
+}
