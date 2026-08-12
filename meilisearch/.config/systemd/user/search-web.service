@@ -1,0 +1,12 @@
+[Unit]
+Description=知识库搜索 Web 前端
+After=meilisearch.service
+Wants=meilisearch.service
+
+[Service]
+ExecStart=%h/.local/bin/search-web
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

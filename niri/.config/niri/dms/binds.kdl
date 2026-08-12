@@ -6,6 +6,7 @@ binds {
 
     // === Application Launchers ===
     Mod+T hotkey-overlay-title="Open Terminal" { spawn "kitty"; }
+    Mod+O hotkey-overlay-title="Open Opencode" { spawn "kitty" "--directory" "/home/explosivitea/dotfiles" "opencode"; }
     Mod+Space hotkey-overlay-title="Application Launcher" {
         spawn "dms" "ipc" "call" "spotlight" "toggle";
     }

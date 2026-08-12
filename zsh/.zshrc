@@ -19,6 +19,13 @@ eval "$(starship init zsh)"
 
 # zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
+    forward-char
+    end-of-line
+    vi-end-of-line
+    vi-forward-word
+    vi-add-eol
+)
 
 # Show how to access a syncthing panel through a browser
 alias syncthinglocal='syncthing cli show system | grep 127'
@@ -78,6 +85,8 @@ alias ipac='sudo pacman -S'
 alias upac='sudo pacman -Syu'
 # pacman delete 
 alias dpac='sudo pacman -Rsn'
+# pacman cache clean
+alias cpac='sudo paccache -r'
 
 # Quick Lazygit
 function lazygit_widget(){
@@ -100,6 +109,18 @@ zle -N yazi_widget
 
 bindkey '^y' yazi_widget
 
+# Quick Opencode
+function opencode_widget(){
+    zle -I
+    cd "$HOME/dotfiles"
+    opencode < /dev/tty
+    zle reset-prompt
+}
+
+zle -N opencode_widget
+
+bindkey '^o' opencode_widget
+
 # keyd shortcuts
 alias editkeys='sudo -E nvim /etc/keyd/*'
 alias loadkeys='keyd check && sudo keyd reload'
@@ -116,18 +137,18 @@ ask() {
     local model="deepseek/deepseek-v4-flash"
     if [[ $# -eq 0 ]]; then
         cd /home/explosivitea/t/copilot-ask
-        opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
+        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
     else
-        opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
+        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
     fi
 }
 askx() {
     local model="deepseek/deepseek-v4-pro"
     if [[ $# -eq 0 ]]; then
         cd /home/explosivitea/t/copilot-ask
-        opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
+        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
     else
-        opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
+        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
     fi
 }
 

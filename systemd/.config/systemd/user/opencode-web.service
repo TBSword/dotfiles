@@ -1,0 +1,11 @@
+[Unit]
+Description=OpenCode Web Server
+
+[Service]
+Type=simple
+ExecStart=opencode web --port 4096
+Restart=on-failure
+Environment=BROWSER=true
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""双栏搜索 Web 前端：左侧 Meilisearch 实时联想 + 右侧文档详情"""
+
+import json
+import http.server
+import urllib.request
+import urllib.parse
+import os
+import sys
+
+PORT = 8765
+MEILI_URL = "http://127.0.0.1:7700"
+MASTER_KEY = "local-dev-key-change-me"
+
+HTML = r'''<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知识库搜索</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1a1a2e; color: #e0e0e0; height: 100vh; overflow: hidden; }
+header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #16213e; border-bottom: 1px solid #0f3460; }
+header input { flex: 1; padding: 10px 16px; border: 1px solid #0f3460; border-radius: 8px; background: #1a1a2e; color: #e0e0e0; font-size: 15px; outline: none; }
+header input:focus { border-color: #e94560; }
+#main { display: flex; height: calc(100vh - 58px); }
+#left { width: 40%; border-right: 1px solid #0f3460; overflow-y: auto; }
+#right { flex: 1; overflow-y: auto; padding: 20px; }
+#stats { padding: 8px 16px; font-size: 12px; color: #888; border-bottom: 1px solid #16213e; }
+.result { padding: 14px 16px; border-bottom: 1px solid #16213e; cursor: pointer; transition: background .15s; }
+.result:hover, .result.active { background: #16213e; }
+.result .title { font-weight: 600; margin-bottom: 4px; color: #e94560; }
+.result .path { font-size: 11px; color: #666; margin-bottom: 6px; }
+.result .snippet { font-size: 13px; color: #bbb; line-height: 1.5; max-height: 3em; overflow: hidden; }
+.result .snippet em { color: #f0c040; font-style: normal; font-weight: 600; }
+#right .doc-title { font-size: 22px; font-weight: 700; color: #e94560; margin-bottom: 6px; }
+#right .doc-path { font-size: 12px; color: #666; margin-bottom: 20px; }
+#right .doc-body { line-height: 1.7; font-size: 14px; white-space: pre-wrap; word-break: break-word; }
+#right .empty { color: #555; font-size: 14px; text-align: center; margin-top: 100px; }
+#right pre { background: #16213e; padding: 12px 16px; border-radius: 8px; overflow-x: auto; margin: 10px 0; }
+#right code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 13px; }
+#right p > code, #right li > code { background: #16213e; padding: 2px 6px; border-radius: 4px; }
+#right table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+#right th, #right td { border: 1px solid #0f3460; padding: 8px 12px; text-align: left; font-size: 13px; }
+#right th { background: #16213e; }
+.right-loaded em { color: #f0c040; font-style: normal; }
+</style>
+</head>
+<body>
+<header>
+  <input id="search" type="text" placeholder="搜索知识库..." autofocus>
+</header>
+<div id="main">
+  <div id="left"><div id="stats"></div><div id="results"></div></div>
+  <div id="right"><div class="empty">选择左侧搜索结果查看详情</div></div>
+</div>
+
+<script>
+const MEILI = 'http://127.0.0.1:7700';
+const KEY = 'local-dev-key-change-me';
+const INDEX = 'notes';
+
+let currentDoc = null;
+
+document.getElementById('search').addEventListener('input', debounce(searchNotes, 200));
+
+async function searchNotes() {
+    const q = document.getElementById('search').value.trim();
+    const resDiv = document.getElementById('results');
+    const statsDiv = document.getElementById('stats');
+
+    if (!q) {
+        resDiv.innerHTML = '';
+        statsDiv.textContent = '';
+        return;
+    }
+
+    const resp = await fetch(`${MEILI}/indexes/${INDEX}/search`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${KEY}` },
+        body: JSON.stringify({ q, limit: 20, attributesToHighlight: ['content'], attributesToCrop: ['content'], cropLength: 30 })
+    });
+    const data = await resp.json();
+
+    statsDiv.textContent = `共 ${data.estimatedTotalHits} 条结果`;
+    resDiv.innerHTML = data.hits.map((h, i) => `
+        <div class="result ${i === 0 ? 'active' : ''}" data-id="${h.id}" onclick="loadDoc('${h.id}', this)">
+            <div class="title">${h.title}</div>
+            <div class="path">${h.relpath}</div>
+            <div class="snippet">${h._formatted?.content || h.content?.substring(0, 200) || ''}</div>
+        </div>
+    `).join('');
+
+    if (data.hits.length > 0) {
+        loadDoc(data.hits[0].id, resDiv.querySelector('.result'));
+    }
+}
+
+async function loadDoc(id, el) {
+    document.querySelectorAll('.result').forEach(r => r.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    const resp = await fetch(`${MEILI}/indexes/${INDEX}/documents/${id}`, {
+        headers: { 'Authorization': `Bearer ${KEY}` }
+    });
+    const doc = await resp.json();
+    currentDoc = doc;
+
+    const right = document.getElementById('right');
+    right.innerHTML = `
+        <div class="doc-title">${doc.title}</div>
+        <div class="doc-path">${doc.relpath}</div>
+        <div class="doc-body right-loaded">${renderMarkdown(doc.content)}</div>
+    `;
+}
+
+function renderMarkdown(md) {
+    return md
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/^### (.+)$/gm, '<h4>$1</h4>')
+        .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^# (.+)$/gm, '<h2>$1</h2>')
+        .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/^\|(.+)\|$/gm, (line) => {
+            const cells = line.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+            return line.includes('---') ? '' : `<tr>${cells}</tr>`;
+        })
+        .replace(/(<tr>.*<\/tr>\n?)+/g, '<table>$&</table>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>');
+}
+
+function debounce(fn, ms) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { document.getElementById('search').value = ''; searchNotes(); }
+});
+</script>
+</body>
+</html>'''
+
+
+class Handler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/":
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(HTML.encode())
+        else:
+            self.send_error(404)
+
+    def log_message(self, fmt, *args):
+        pass
+
+
+def main():
+    print(f"搜索前端: http://127.0.0.1:{PORT}", flush=True)
+    server = http.server.HTTPServer(("127.0.0.1", PORT), Handler)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        server.shutdown()
+
+
+if __name__ == "__main__":
+    main()

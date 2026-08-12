@@ -38,6 +38,9 @@ end
 -- sshfs.yazi
 require("sshfs"):setup()
 
+-- easyjump.yazi
+require("easyjump"):setup()
+
 
 -- whoosh.yazi
 --

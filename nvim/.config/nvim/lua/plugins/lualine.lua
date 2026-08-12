@@ -18,6 +18,13 @@ return {
                 "encoding",
                 "filetype",
             },
+            lualine_z = {
+                {
+                    function()
+                        return pcall(require, "opencode") and require("opencode").statusline()
+                    end,
+                },
+            },
         },
     },
 }

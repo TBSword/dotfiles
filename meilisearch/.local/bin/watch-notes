@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+"""监听 ~/Desktop/B1/notes/ 变化，自动索引到 Meilisearch"""
+
+import os
+import time
+import subprocess
+import hashlib
+from pathlib import Path
+
+WATCH_DIR = Path("/home/explosivitea/Desktop/B1/notes")
+INDEX_SCRIPT = Path.home() / ".local/bin/index-notes"
+DEBOUNCE = 2.0
+IGNORE = {".git", ".obsidian", ".trash", ".DS_Store"}
+
+
+def walk_md(root: Path):
+    files = {}
+    for p in sorted(root.rglob("*.md")):
+        rel = p.relative_to(root)
+        skip = any(part in IGNORE for part in rel.parts)
+        if skip:
+            continue
+        files[rel] = hashlib.md5(p.read_bytes()).hexdigest()
+    return files
+
+
+def main():
+    print(f"监听 {WATCH_DIR}", flush=True)
+    prev = walk_md(WATCH_DIR)
+
+    while True:
+        time.sleep(DEBOUNCE)
+        curr = walk_md(WATCH_DIR)
+
+        added = set(curr.keys()) - set(prev.keys())
+        removed = set(prev.keys()) - set(curr.keys())
+        changed = {k for k in curr.keys() & prev.keys() if curr[k] != prev[k]}
+
+        for rel in removed:
+            subprocess.run(
+                [str(INDEX_SCRIPT), "rm", str(WATCH_DIR / rel)],
+                capture_output=True,
+            )
+
+        for rel in sorted(added | changed):
+            subprocess.run(
+                [str(INDEX_SCRIPT), "add", str(WATCH_DIR / rel)],
+                capture_output=True,
+            )
+
+        if added or removed or changed:
+            print(f"  +{len(added)} -{len(removed)} ~{len(changed)}", flush=True)
+
+        prev = curr
+
+
+if __name__ == "__main__":
+    main()
