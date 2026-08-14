@@ -11,7 +11,6 @@ if command -v fuzzel &>/dev/null; then
         --width=16 \
         --horizontal-pad=16 \
         --anchor=center \
-        --no-mouse \
         --no-run-if-empty 2>/dev/null)
 elif command -v wofi &>/dev/null; then
     choice=$(echo -e "$options_text" | wofi --dmenu -p "Power:" 2>/dev/null)

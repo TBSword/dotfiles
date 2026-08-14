@@ -1,4 +1,4 @@
-/* ── Fontaine ──────────────────────────────────────────────── */
+/* ── Font ─────────────────────────────────────────────────── */
 * {
     font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK SC", sans-serif;
     font-size: 13px;
@@ -8,9 +8,9 @@
 
 /* ── Bar ──────────────────────────────────────────────────── */
 window#waybar {
-    background-color: rgba(28, 35, 32, 0.78);
-    border-radius: 10px;
-    color: #d4dcd8;
+    background-color: #000000;
+    border-radius: 0;
+    color: #cccccc;
     transition-property: background-color;
     transition-duration: 0.3s;
 }
@@ -19,9 +19,8 @@ window#waybar.hidden {
     opacity: 0;
 }
 
-/* per-app bar tint — solo window */
 window#waybar.empty {
-    background-color: rgba(28, 35, 32, 0.45);
+    background-color: #0a0a0a;
 }
 
 /* ── Buttons (modules) ────────────────────────────────────── */
@@ -32,8 +31,8 @@ button {
 }
 
 button:hover {
-    background: rgba(139, 170, 160, 0.18);
-    box-shadow: inset 0 -2px rgba(139, 170, 160, 0.5);
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: inset 0 -2px rgba(255, 255, 255, 0.15);
     border: none;
 }
 
@@ -54,22 +53,22 @@ button:hover {
 }
 
 #idle_inhibitor.activated {
-    background-color: rgba(139, 170, 160, 0.35);
-    color: #c8e6d8;
+    background-color: rgba(255, 255, 255, 0.10);
+    color: #aaaaaa;
 }
 
 /* ── CPU / Memory / Temperature ───────────────────────────── */
 #cpu {
-    color: #c8e6d8;
+    color: #cccccc;
 }
 
 #memory {
-    color: #c8e6d8;
+    color: #cccccc;
 }
 
 #temperature.critical {
-    background-color: rgba(196, 122, 106, 0.35);
-    color: #f0ccc4;
+    background-color: rgba(200, 70, 60, 0.20);
+    color: #e07060;
 }
 
 /* ── Network ──────────────────────────────────────────────── */
@@ -78,26 +77,26 @@ button:hover {
 }
 
 #network.disconnected {
-    background-color: rgba(196, 122, 106, 0.30);
-    color: #f0ccc4;
+    background-color: rgba(200, 70, 60, 0.18);
+    color: #e07060;
 }
 
 /* ── WirePlumber ──────────────────────────────────────────── */
 #wireplumber.muted {
-    background-color: rgba(196, 122, 106, 0.25);
-    color: rgba(212, 220, 216, 0.45);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(200, 200, 200, 0.35);
 }
 
 #wireplumber.bluetooth {
-    background-color: rgba(106, 171, 142, 0.25);
+    background-color: rgba(80, 180, 130, 0.15);
 }
 
 /* ── Backlight ────────────────────────────────────────────── */
 #backlight {
-    color: #e8dcc4;
+    color: #d4c07a;
 }
 
-/* ── Clock ────────────────────────────────────────────────── */
+/* ── Keyboard state ───────────────────────────────────────── */
 #keyboard-state {
     min-width: 10px;
     padding: 0 8px;
@@ -108,13 +107,13 @@ button:hover {
 }
 
 #keyboard-state > label.locked {
-    color: #bce8d4;
+    color: #60d890;
 }
 
 /* ── Clock ────────────────────────────────────────────────── */
 #clock {
-    background-color: rgba(139, 170, 160, 0.22);
-    color: #c8e6d8;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #cccccc;
     font-weight: 600;
 }
 
@@ -130,38 +129,43 @@ button:hover {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: rgba(196, 122, 106, 0.35);
+    background-color: rgba(200, 70, 60, 0.20);
     border-radius: 6px;
 }
 
 /* ── MPRIS ─────────────────────────────────────────────────── */
 #mpris {
-    background-color: rgba(106, 171, 142, 0.20);
-    color: #bce8d4;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #cccccc;
     min-width: 80px;
 }
 
-/* ── Custom modules ───────────────────────────────────────── */#custom-power {
-    background-color: rgba(37, 61, 51, 0.40);
+/* ── Custom modules ───────────────────────────────────────── */
+#custom-power {
+    background-color: rgba(255, 255, 255, 0.06);
     font-size: 15px;
     padding: 0 12px;
 }
 
 #custom-power:hover {
-    background-color: rgba(196, 122, 106, 0.30);
-    color: #f0ccc4;
+    background-color: rgba(200, 70, 60, 0.18);
+    color: #e07060;
 }
 
 /* ── Tooltips ─────────────────────────────────────────────── */
 tooltip {
-    background: rgba(20, 28, 25, 0.94);
-    border: 1px solid rgba(139, 170, 160, 0.3);
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
-    color: #d4dcd8;
+    color: #cccccc;
     padding: 8px 12px;
+    box-shadow: none;
 }
 
 tooltip label {
-    color: #d4dcd8;
-    font-size: 12px;
+    font-family: "Noto Sans CJK SC", "JetBrainsMono Nerd Font", sans-serif;
+    color: #cccccc;
+    font-size: 13px;
+    font-weight: 400;
+    text-shadow: none;
 }

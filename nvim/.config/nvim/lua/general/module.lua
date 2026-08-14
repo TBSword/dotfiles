@@ -1,3 +1,9 @@
+-- ocp-indent (OCaml) indentation plugin
+vim.opt.rtp:append('/home/explosivitea/.opam/cs3110-2026sp/share/ocp-indent/vim')
+
+-- Sync with system clipboard
+vim.opt.clipboard = 'unnamedplus'
+
 -- Display line number
 vim.opt.relativenumber = true
 
@@ -17,6 +23,9 @@ vim.opt.shiftwidth = 0
 
 -- Refresh when the file is modified
 vim.opt.autoread = true
+
+-- Persistent undo history
+vim.opt.undofile = true
 
 -- Custom hotkey setting
 vim.g.mapleader = " "

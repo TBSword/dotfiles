@@ -83,7 +83,8 @@
 
     "backlight": {
         "format": "{icon}  {percent}%",
-        "format-icons": ["", "", "", "", "", "", "", "", ""]
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "tooltip-format": "屏幕亮度: {percent}%"
     },
 
     "battery": {
@@ -92,10 +93,11 @@
             "critical": 15
         },
         "format": "{icon} {capacity}%",
-        "format-charging": "{icon} {capacity}%",
-        "format-plugged": "{icon} {capacity}%",
-        "format-icons": ["", "", "", "", ""],
-        "tooltip": true
+        "format-charging": "󰂄 {capacity}%",
+        "format-plugged": "󱊥 {capacity}%",
+        "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂"],
+        "tooltip": true,
+        "tooltip-format": "电量: {capacity}%\n剩余时间: {time}\n功耗: {power} W\n健康度: {health}%"
     },
 
     "network": {
@@ -105,7 +107,9 @@
         "format-disconnected": "󰤮  Disconnected",
         "format-alt": "   {essid}",
         "tooltip-format": "{ifname}\n {ipaddr}/{cidr}\n {frequency} MHz",
-        "on-click": "nm-connection-editor"
+        "on-click": "nm-connection-editor",
+        "on-click-right": "bash -c 'nmcli radio wifi $(nmcli radio wifi | grep -q enabled && echo off || echo on)'",
+        "on-click-middle": "nmcli networking off ; sleep 1 ; nmcli networking on"
     },
 
     "wireplumber": {
@@ -120,7 +124,7 @@
             "car": "",
             "default": ["", "", "󰕾", ""]
         },
-        "on-click": "pavucontrol",
+        "on-click": "kcmshell6 kcm_pulseaudio",
         "on-click-right": "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
     },
 

@@ -1,0 +1,12 @@
+[Unit]
+Description=Watch notes directory and auto-index into Meilisearch
+After=meilisearch.service
+Wants=meilisearch.service
+
+[Service]
+ExecStart=%h/.local/bin/watch-notes
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

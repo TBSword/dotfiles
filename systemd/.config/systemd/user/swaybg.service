@@ -1,8 +1,0 @@
-[Unit]
-PartOf=graphical-session.target
-After=graphical-session.target
-Requisite=graphical-session.target
-
-[Service]
-ExecStart=/usr/bin/swaybg -m fill -i "/home/explosivitea/Pictures/monastairs_desktop_final.png"
-Restart=on-failure

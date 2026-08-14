@@ -1,24 +1,54 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "1db18bb"
-hash = "eff8ff12fa4e5f035a10d8aeeb4c258d"
+rev = "c2c16c8"
+hash = "7b625412411be411153886894d9acaf"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:toggle-pane"
-rev = "1db18bb"
+rev = "c2c16c8"
 hash = "9c7987da2d2a2120dac33abb64132004"
 
 [[plugin.deps]]
 use = "XYenon/clipboard"
-rev = "68b506d"
-hash = "f43576db983846d8d5b139ece1eda439"
+rev = "0ac0320"
+hash = "f80172438b4b5c31e94d6c891f734445"
 
 [[plugin.deps]]
 use = "uhs-robert/sshfs"
 rev = "a8b8903"
 hash = "8c1b36103121a66b37308afaf7124575"
 
+[[plugin.deps]]
+use = "mikavilpas/easyjump.yazi:easyjump"
+rev = "57401c0"
+hash = "b976709df0f6d3341736f053e87b2b8"
+
+[[plugin.deps]]
+use = "Ape/smart-enter"
+rev = "1c835cc"
+hash = "d6d6fa001c2cda9dda6eb5bc6beb96b7"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:chmod"
+rev = "8cd50c6"
+hash = "5b1c276b75cae91cbbdbe7863f39a540"
+
+[[plugin.deps]]
+use = "pirafrank/what-size"
+rev = "179ebf6"
+hash = "57056b9728006881d580ccabe8154a9c"
+
+[[plugin.deps]]
+use = "jaam8/wise-enter"
+rev = "341f289"
+hash = "f35a1a045c1dd63160fcfb62b9cb082a"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-paste"
+rev = "4c63ed3"
+hash = "3f8d49413bc8691b4c652eb417a20178"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-latte"
-rev = "0670801"
+rev = "36c49ac"
 hash = "b8f46853c27707115f25f3423a47bd38"

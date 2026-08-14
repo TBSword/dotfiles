@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+"""索引 ~/notes/ 下所有 .md 文件到 Meilisearch"""
+
+import os
+import json
+import hashlib
+import argparse
+from pathlib import Path
+from meilisearch import Client
+
+NOTES_DIR = Path("/home/explosivitea/Desktop/B1/notes")
+MEILI_URL = "http://127.0.0.1:7700"
+MASTER_KEY = "local-dev-key-change-me"
+INDEX_NAME = "notes"
+
+
+def get_client():
+    return Client(MEILI_URL, MASTER_KEY)
+
+
+def read_md(filepath: Path) -> dict:
+    content = filepath.read_text()
+    return {
+        "id": hashlib.md5(str(filepath).encode()).hexdigest(),
+        "title": filepath.stem,
+        "path": str(filepath),
+        "content": content,
+        "relpath": str(filepath.relative_to(NOTES_DIR)),
+        "size": len(content),
+    }
+
+
+def index_all():
+    client = get_client()
+    index = client.index(INDEX_NAME)
+
+    settings = {
+        "searchableAttributes": ["title", "content", "relpath"],
+        "filterableAttributes": ["relpath"],
+        "sortableAttributes": ["size", "title"],
+    }
+    index.update_settings(settings)
+
+    docs = []
+    for md_file in sorted(NOTES_DIR.rglob("*.md")):
+        docs.append(read_md(md_file))
+        print(f"  {md_file.relative_to(NOTES_DIR)}")
+
+    if docs:
+        task = index.add_documents(docs)
+        client.wait_for_task(task.task_uid)
+        print(f"\n索引完成: {len(docs)} 篇文档")
+    else:
+        print("~/notes/ 下没有 .md 文件")
+
+
+def index_file(filepath: str):
+    client = get_client()
+    index = client.index(INDEX_NAME)
+    p = Path(filepath).resolve()
+    doc = read_md(p)
+    task = index.add_documents([doc])
+    client.wait_for_task(task.task_uid)
+    print(f"已索引: {p.relative_to(NOTES_DIR)}")
+
+
+def delete_file(filepath: str):
+    client = get_client()
+    index = client.index(INDEX_NAME)
+    docid = hashlib.md5(str(Path(filepath).resolve()).encode()).hexdigest()
+    task = index.delete_document(docid)
+    client.wait_for_task(task.task_uid)
+    print(f"已删除: {filepath}")
+
+
+def search(query: str, limit: int = 10):
+    client = get_client()
+    index = client.index(INDEX_NAME)
+    result = index.search(query, {"limit": limit, "attributesToHighlight": ["content"]})
+    for hit in result["hits"]:
+        print(f"\n  [{hit['title']}] — {hit['relpath']}")
+        formatted = hit.get("_formatted", {})
+        if "content" in formatted:
+            print(f"  {formatted['content'][:200]}")
+    print(f"\n共 {result['estimatedTotalHits']} 条结果")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="索引 ~/notes/ 到 Meilisearch")
+    sub = parser.add_subparsers(dest="cmd")
+
+    sub.add_parser("index", help="全量索引 ~/notes/ 下所有 .md")
+    sub.add_parser("start", help="启动 meilisearch 服务")
+    a = sub.add_parser("add", help="索引单个文件")
+    a.add_argument("file")
+    d = sub.add_parser("rm", help="从索引中删除文件")
+    d.add_argument("file")
+    s = sub.add_parser("search", help="搜索")
+    s.add_argument("query")
+    s.add_argument("-n", "--limit", type=int, default=10)
+
+    args = parser.parse_args()
+
+    if args.cmd == "index":
+        index_all()
+    elif args.cmd == "add":
+        index_file(args.file)
+    elif args.cmd == "rm":
+        delete_file(args.file)
+    elif args.cmd == "search":
+        search(args.query, args.limit)
+    elif args.cmd == "start":
+        data_dir = os.path.expanduser("~/.config/meilisearch/data")
+        log_path = os.path.expanduser("~/.config/meilisearch/meili.log")
+        cmd = (
+            f"meilisearch --db-path {data_dir} --master-key {MASTER_KEY} "
+            f'--http-addr 127.0.0.1:7700 --no-analytics '
+            f">> {log_path} 2>&1 &"
+        )
+        print(cmd)
+        os.system(cmd)
+        print("meilisearch 已启动 (127.0.0.1:7700)")
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

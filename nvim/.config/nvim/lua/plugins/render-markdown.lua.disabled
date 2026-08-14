@@ -1,0 +1,94 @@
+return {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.nvim' },
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {
+        heading = {
+            position = 'inline',
+            border = true,
+            border_virtual = true,
+            border_prefix = true,
+            sign = true,
+            width = 'full',
+            -- custom highlight groups for dark backgrounds
+            -- override the broken defaults (H4→DiffDelete=red, H2→DiffAdd=green)
+            backgrounds = {
+                'RenderMarkdownH1Bg',
+                'RenderMarkdownH2Bg',
+                'RenderMarkdownH3Bg',
+                'RenderMarkdownH4Bg',
+                'RenderMarkdownH5Bg',
+                'RenderMarkdownH6Bg',
+            },
+            foregrounds = {
+                'RenderMarkdownH1',
+                'RenderMarkdownH2',
+                'RenderMarkdownH3',
+                'RenderMarkdownH4',
+                'RenderMarkdownH5',
+                'RenderMarkdownH6',
+            },
+        },
+        code = {
+            -- thin: render borders even without empty lines (default 'hide' often looks broken)
+            border = 'thin',
+            width = 'full',
+            style = 'full',
+        },
+        paragraph = {
+            -- subtle left margin improves readability
+            left_margin = 0.05,
+            min_width = 20,
+        },
+        dash = {
+            -- thicker horizontal rule
+            icon = '━',
+            width = 'full',
+        },
+        quote = {
+            icon = '▎',
+        },
+        pipe_table = {
+            style = 'full',
+            cell = 'padded',
+        },
+        checkbox = {
+            enabled = true,
+            custom = {
+                todo = { raw = '[-]', rendered = '󰥔 ', highlight = 'RenderMarkdownTodo' },
+                doing = { raw = '[/]', rendered = '󰔟 ', highlight = 'RenderMarkdownWarn' },
+            },
+        },
+        completions = {
+            lsp = { enabled = true },
+        },
+        on = {
+            attach = function()
+                -- Fix heading colors for dark backgrounds.
+                -- Default links (H4→DiffDelete=red, H2→DiffAdd=green) make
+                -- lower headings look more prominent than higher ones.
+                local bg = {
+                    '#1e2030', -- H1: dark blue-gray
+                    '#1e2320', -- H2: dark green-gray
+                    '#232020', -- H3: dark warm-gray
+                    '#202024', -- H4: dark neutral
+                    '#18181c', -- H5: darker neutral
+                    '#121216', -- H6: darkest
+                }
+                local fg = {
+                    '#c8d6f8', -- H1: bright blue-white
+                    '#c0d8c0', -- H2: soft green
+                    '#d8c8b8', -- H3: soft beige
+                    '#b0b8c8', -- H4: muted blue-gray
+                    '#909098', -- H5: gray
+                    '#707078', -- H6: dim gray
+                }
+                for i = 1, 6 do
+                    vim.api.nvim_set_hl(0, 'RenderMarkdownH' .. i .. 'Bg', { bg = bg[i] })
+                    vim.api.nvim_set_hl(0, 'RenderMarkdownH' .. i, { fg = fg[i] })
+                end
+            end,
+        },
+    },
+}

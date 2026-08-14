@@ -10,6 +10,12 @@ return {
         },
     },
     cmd = "Telescope",
+    keys = {
+        { "<leader>f", "<Cmd>Telescope buffers<CR>", desc = "Find Buffer", silent = true },
+        { "<leader><C-f>", "<Cmd>Telescope find_files<CR>", desc = "Find Files", silent = true },
+        { "<leader><C-s>", "<Cmd>Telescope live_grep<CR>", desc = "Live Grep", silent = true },
+        { "<leader>r", "<Cmd>Telescope oldfiles<CR>", desc = "Recent Files", silent = true },
+    },
     opts = {
         extensions = {
             fzf = {
