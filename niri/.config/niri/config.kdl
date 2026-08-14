@@ -12,6 +12,9 @@ environment {
     XMODIFIERS "@im=fcitx"
 }
 spawn-at-startup "fcitx5"
+spawn-at-startup "swaybg-start"
+spawn-at-startup "waybar"
+spawn-at-startup "swayidle-start"
 input {
     keyboard {
         xkb {
@@ -277,7 +280,6 @@ layout {
 // See the binds section below for more spawn examples.
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
-// spawn-at-startup "waybar"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -354,6 +356,12 @@ window-rule {
     open-floating true
 }
 
+// Open Goldendict as floating popup.
+window-rule {
+    match app-id=r#"(?i)goldendict"#
+    open-floating true
+}
+
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
 /-window-rule {
@@ -400,6 +408,7 @@ binds {
     Mod+Z hotkey-overlay-title="Open Opencode Web" { spawn "firefox-developer-edition" "--new-window" "http://localhost:4096"; }
     Mod+Y hotkey-overlay-title="Open Yazi" { spawn "/home/explosivitea/.local/bin/tmux-yazi"; }
     Mod+D repeat=false hotkey-overlay-title="Run an Application: vicinae" { spawn "vicinae" "toggle"; }
+    Mod+G hotkey-overlay-title="Open Goldendict" { spawn "goldendict"; }
     Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.

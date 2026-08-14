@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/bin/swayidle -w -C /home/explosivitea/.config/swayidle/config

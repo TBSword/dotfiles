@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/bin/swaybg -m fill -i /home/explosivitea/Pictures/monastairs_desktop_final.png

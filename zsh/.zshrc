@@ -153,10 +153,20 @@ askx() {
 }
 
 # Colemak reference
-# echo "  +-----------------------------------------------------+ "
-# echo "  |             C O L E M A K   L A Y O U T             | "
-# echo "  +-----------------------------------------------------+ "
-# echo "                                                          "
-# echo "   [Q] [W] [F] [P] [G]   [J] [L] [U] [Y] [;] [[] []] [\]  "
-# echo "     [A] [R] [S] [T] [D]   [H] [N] [E] [I] [O] [']        "
-# echo "       [Z] [X] [C] [V] [B]   [K] [M] [,] [.] [/]          "
+colemak() {
+echo "  +-----------------------------------------------------+ "
+echo "  |             C O L E M A K   L A Y O U T             | "
+echo "  +-----------------------------------------------------+ "
+echo "                                                          "
+echo "   [Q] [W] [F] [P] [G]   [J] [L] [U] [Y] [;] [[] []] [\]  "
+echo "     [A] [R] [S] [T] [D]   [H] [N] [E] [I] [O] [']        "
+echo "       [Z] [X] [C] [V] [B]   [K] [M] [,] [.] [/]          "
+}
+
+# BEGIN opam configuration
+# This is useful if you're using opam as it adds:
+#   - the correct directories to the PATH
+#   - auto-completion for the opam binary
+# This section can be safely removed at any time if needed.
+[[ ! -r '/home/explosivitea/.opam/opam-init/init.zsh' ]] || source '/home/explosivitea/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+# END opam configuration

@@ -3,7 +3,7 @@ Description=Meilisearch search engine
 After=network.target
 
 [Service]
-ExecStart=%h/.local/bin/meilisearch --db-path %h/.config/meilisearch/data --master-key local-dev-key-change-me --http-addr 127.0.0.1:7700 --no-analytics
+ExecStart=/usr/bin/meilisearch --db-path %h/.config/meilisearch/data --master-key local-dev-key-change-me --http-addr 127.0.0.1:7700 --no-analytics --upgrade-db
 Restart=on-failure
 RestartSec=3
 
