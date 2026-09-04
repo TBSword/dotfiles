@@ -170,3 +170,8 @@ echo "       [Z] [X] [C] [V] [B]   [K] [M] [,] [.] [/]          "
 # This section can be safely removed at any time if needed.
 [[ ! -r '/home/explosivitea/.opam/opam-init/init.zsh' ]] || source '/home/explosivitea/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 # END opam configuration
+#
+
+export REPO_DIR=/home/explosivitea/Desktop/Ferrous/terraria_ig/repo/sp21-s456
+export SNAPS_DIR=/home/explosivitea/Desktop/Ferrous/terraria_ig/repo/snaps-sp21-s456
+
