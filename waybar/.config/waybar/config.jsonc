@@ -9,7 +9,7 @@
     "margin-right": 8,
 
     "modules-left": [
-        "niri/workspaces",
+        "custom/workspace",
         "mpris"
     ],
     "modules-center": [
@@ -19,9 +19,8 @@
         "idle_inhibitor",
         "wireplumber",
         "network",
-        "cpu",
-        "memory",
-        "temperature",
+        "custom/sys",
+        "custom/temp",
         "backlight",
         "battery",
         "clock",
@@ -31,18 +30,15 @@
 
     // ── niri modules ──────────────────────────────────────────
 
-    "niri/workspaces": {
-        "format": "{icon} {name}",
-        "format-icons": {
-            "urgent": " ",
-            "focused": " ",
-            "active": " ",
-            "default": " "
-        },
-        "disable-click": false,
-        "all-outputs": false,
-        "current-only": false,
-        "on-click": "activate"
+    "custom/workspace": {
+        "exec": "$HOME/.local/bin/niri-ws",
+        "interval": 1,
+        "format": "{}",
+        "markup": "pango",
+        "tooltip": false,
+        "on-click": "niri msg action focus-workspace-previous",
+        "on-scroll-up": "niri msg action focus-workspace-up",
+        "on-scroll-down": "niri msg action focus-workspace-down"
     },
 
     "niri/window": {
@@ -62,23 +58,18 @@
 
     // ── system modules ────────────────────────────────────────
 
-    "cpu": {
-        "format": "  {usage}%",
-        "tooltip": false,
-        "interval": 5
+    "custom/sys": {
+        "exec": "$HOME/.local/bin/niri-sys",
+        "interval": 5,
+        "format": "{}",
+        "tooltip": false
     },
 
-    "memory": {
-        "format": "  {}%",
-        "tooltip": false,
-        "interval": 10
-    },
-
-    "temperature": {
-        "critical-threshold": 80,
-        "format": "{temperatureC}°C {icon}",
-        "format-icons": ["", "", "", "", ""],
-        "interval": 5
+    "custom/temp": {
+        "exec": "$HOME/.local/bin/niri-temp",
+        "interval": 5,
+        "format": "{}",
+        "tooltip": false
     },
 
     "backlight": {
@@ -101,20 +92,19 @@
     },
 
     "network": {
-        "format-wifi": "   {signalStrength}%",
-        "format-ethernet": "󰈀  {ipaddr}",
-        "format-linked": "󰈀  {ifname}",
-        "format-disconnected": "󰤮  Disconnected",
-        "format-alt": "   {essid}",
-        "tooltip-format": "{ifname}\n {ipaddr}/{cidr}\n {frequency} MHz",
-        "on-click": "nm-connection-editor",
+        "format-wifi": "",
+        "format-ethernet": "󰈀",
+        "format-linked": "󰈀",
+        "format-disconnected": "󰤮",
+        "tooltip-format": "{essid}\n {ipaddr}/{cidr}\n{signalStrength}%\n{ifname}\n{frequency} MHz",
+        "on-click": "kitty --class nmtui nmtui",
         "on-click-right": "bash -c 'nmcli radio wifi $(nmcli radio wifi | grep -q enabled && echo off || echo on)'",
         "on-click-middle": "nmcli networking off ; sleep 1 ; nmcli networking on"
     },
 
     "wireplumber": {
-        "format": "{icon}  {volume}%",
-        "format-muted": "󰝟  Muted",
+        "format": "{icon}",
+        "format-muted": "󰝟",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
