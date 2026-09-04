@@ -1,11 +1,12 @@
 [Unit]
-Description=OpenCode Web Server
+Description=DeepSeek Harness Web UI
 
 [Service]
 Type=simple
-ExecStart=opencode web --port 4096
+WorkingDirectory=/home/explosivitea/Desktop/B1/reposet/deepseek-harness
+Environment=PATH=/home/explosivitea/.nvm/versions/node/v22.22.0/bin:/usr/local/bin:/usr/bin:/usr/local/sbin
+ExecStart=/home/explosivitea/.nvm/versions/node/v22.22.0/bin/pnpm dsh web
 Restart=on-failure
-Environment=BROWSER=true
 
 [Install]
 WantedBy=default.target
