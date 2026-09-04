@@ -36,6 +36,18 @@ return {
             },
         })
 
+        vim.lsp.config("ocamllsp", {
+            cmd = { "opam", "exec", "--", "ocamllsp" },
+        })
+
+        -- 让 jdtls 把 root_dir 定位到 Maven/Gradle 项目目录（pom.xml / build.gradle），
+        -- 而不是 git 仓库根目录。否则在 monorepo（一个 git 仓库含多个 lab/proj 子项目）里，
+        -- jdtls 会定位到 git 根、找不到项目，导致 .java 文件 "does not resolve to a
+        -- ICompilationUnit"，补全和诊断全部失效。
+        vim.lsp.config("jdtls", {
+            root_markers = { "pom.xml", "build.gradle", "build.gradle.kts", "build.xml", ".git" },
+        })
+
         vim.lsp.enable({
             "lua_ls",
             "ts_ls",
@@ -43,6 +55,7 @@ return {
             "jdtls",
             "rust_analyzer",
             "clangd",
+            "ocamllsp",
         })
     end,
 }
