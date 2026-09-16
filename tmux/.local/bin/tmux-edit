@@ -1,0 +1,31 @@
+#!/bin/bash
+# Send files to nvim windows in the same tmux session as yazi.
+# Falls back to direct nvim if not running inside tmux.
+
+SESSION=$(tmux display-message -p '#S' 2>/dev/null)
+
+if [[ -z "$SESSION" ]]; then
+    exec nvim "$@"
+fi
+if [[ $# -eq 0 ]]; then
+    exit 0
+fi
+
+for f in "$@"; do
+    DIR=$(dirname "$(realpath "$f")")
+    NAME=$(basename "$DIR")
+    WIN="n-${NAME}"
+
+    if ! tmux list-windows -t "$SESSION" -F '#{window_name}' 2>/dev/null | grep -qxF "$WIN"; then
+        escaped=$(printf '%q' "$f")
+        tmux new-window -t "$SESSION" -n "$WIN" \
+            "ulimit -n 65536 2>/dev/null; exec nvim $escaped"
+    else
+        safe="${f//\\/\\\\}"
+        safe="${safe// /\\ }"
+        tmux send-keys -t "$SESSION:$WIN" ":e $safe" Enter
+        sleep 0.1
+    fi
+done
+
+tmux select-window -t "$SESSION:$WIN"

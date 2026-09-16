@@ -1,0 +1,10 @@
+#!/bin/bash
+export PATH="$HOME/.local/bin:$PATH"
+
+N=1
+while tmux has-session -t "yazi-$N" 2>/dev/null; do
+    ((N++))
+done
+SESSION="yazi-$N"
+
+exec kitty -e tmux new-session -s "$SESSION" -n yazi yazi

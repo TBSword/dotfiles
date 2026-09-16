@@ -1,0 +1,10 @@
+#!/bin/bash
+export PATH="$HOME/.local/bin:$PATH"
+
+SESSION=$(tmux display-message -p '#S' 2>/dev/null)
+
+if [[ -z "$SESSION" ]]; then
+    exec opencode "$@"
+fi
+
+tmux new-window -t "$SESSION" -n opencode opencode

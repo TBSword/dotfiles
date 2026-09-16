@@ -8,7 +8,7 @@ bindkey -v
 
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '/home/explosivitea/.zshrc'
+zstyle :compinstall filename "$HOME/.zshrc"
 
 autoload -Uz compinit
 compinit
@@ -70,7 +70,7 @@ d() {
 source ~/fzf.zsh
 
 # Add ./.local to PATH
-export PATH="$PATH:/home/explosivitea/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # nvm needs this code
 source /usr/share/nvm/init-nvm.sh
@@ -125,7 +125,7 @@ bindkey '^o' opencode_widget
 alias editkeys='sudo -E nvim /etc/keyd/*'
 alias loadkeys='keyd check && sudo keyd reload'
 # Xtea_log is my journal as a sysadmin
-alias xtealog='nvim /home/explosivitea/Documents/Xtea_log/yeah.sh'
+alias xtealog="nvim $HOME/Documents/Xtea_log/yeah.sh"
 alias nvfu='systemctl hibernate'
 
 # android sdk
@@ -136,19 +136,19 @@ export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:
 ask() {
     local model="deepseek/deepseek-v4-flash"
     if [[ $# -eq 0 ]]; then
-        cd /home/explosivitea/t/copilot-ask
+        cd "$HOME/t/copilot-ask"
         OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
     else
-        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
+        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode run --dir "$HOME/t/copilot-ask" -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
     fi
 }
 askx() {
     local model="deepseek/deepseek-v4-pro"
     if [[ $# -eq 0 ]]; then
-        cd /home/explosivitea/t/copilot-ask
+        cd "$HOME/t/copilot-ask"
         OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model"
     else
-        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode run --dir /home/explosivitea/t/copilot-ask -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
+        OPENCODE_EXPERIMENTAL_PLAN_MODE=true opencode run --dir "$HOME/t/copilot-ask" -s ses_1feb442aeffefQeRlxIEBL0piB -m "$model" "$@"
     fi
 }
 
@@ -168,10 +168,10 @@ echo "       [Z] [X] [C] [V] [B]   [K] [M] [,] [.] [/]          "
 #   - the correct directories to the PATH
 #   - auto-completion for the opam binary
 # This section can be safely removed at any time if needed.
-[[ ! -r '/home/explosivitea/.opam/opam-init/init.zsh' ]] || source '/home/explosivitea/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
+[[ ! -r "$HOME/.opam/opam-init/init.zsh" ]] || source "$HOME/.opam/opam-init/init.zsh" > /dev/null 2> /dev/null
 # END opam configuration
 #
 
-export REPO_DIR=/home/explosivitea/Desktop/Ferrous/terraria_ig/repo/sp21-s456
-export SNAPS_DIR=/home/explosivitea/Desktop/Ferrous/terraria_ig/repo/snaps-sp21-s456
+export REPO_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/sp21-s456"
+export SNAPS_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/snaps-sp21-s456"
 
