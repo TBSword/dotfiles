@@ -1,0 +1,37 @@
+#!/bin/bash
+# Open the DSH Web UI. Uses the live systemd unit's token URL when available,
+# so a fresh browser/profile can authenticate without hunting the journal.
+# Falls back to the bare loopback URL, which works once the browser cookie exists.
+set -euo pipefail
+
+UNIT="dsh-web.service"
+FALLBACK_URL="http://127.0.0.1:3080"
+
+read_token_url() {
+    local invocation token
+    invocation="$(systemctl --user show -p InvocationID "$UNIT" 2>/dev/null \
+        | sed -n 's/^InvocationID=//p' || true)"
+    [[ -n "$invocation" ]] || return 0
+    token="$(journalctl --user _SYSTEMD_INVOCATION_ID="$invocation" -b --no-pager 2>/dev/null \
+        | grep -oE 'dsh web: http://[^ ]+' \
+        | tail -n 1 \
+        | sed 's/^dsh web: //' || true)"
+    printf '%s\n' "$token"
+}
+
+URL="$FALLBACK_URL"
+state="$(systemctl --user is-active "$UNIT" 2>/dev/null || true)"
+
+if [[ "$state" == "active" || "$state" == "activating" ]]; then
+    # The token line appears only after boot settles; give it a moment.
+    for _ in {1..10}; do
+        token="$(read_token_url)"
+        if [[ -n "$token" ]]; then
+            URL="$token"
+            break
+        fi
+        sleep 0.5
+    done
+fi
+
+exec firefox-developer-edition --new-window "$URL"

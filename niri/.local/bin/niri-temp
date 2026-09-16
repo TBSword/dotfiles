@@ -1,0 +1,6 @@
+#!/bin/sh
+# niri-temp — 仅在最热传感器 >=75°C 时输出温度，平时留空
+t=$(cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null | sort -rn | head -1)
+[ -z "$t" ] && exit 0
+t=$((t / 1000))
+[ "$t" -ge 75 ] && printf ' %s°C' "$t"

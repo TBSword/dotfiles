@@ -1,0 +1,27 @@
+#!/bin/sh
+# niri-ws — 当前工作区号/总数，以不可读字形显示
+# 字形映射 0-9，可自行替换；当前号以强调色显示，总数默认色
+GLYPHS="󰅗 󰍏 󰋃 󰏧 󰅴 󰊺 󰛳 󰰙 󰋘 󰑉"
+
+glyph() {
+    n=$1
+    i=0
+    for g in $GLYPHS; do
+        i=$((i + 1))
+        [ "$i" = "$n" ] && { printf '%s' "$g"; return 0; }
+    done
+    printf '?'
+}
+
+out=$(niri msg workspaces 2>/dev/null)
+
+cur=$(printf '%s\n' "$out" | sed -n 's/^ \* \([0-9][0-9]*\) *$/\1/p' | head -1)
+[ -z "$cur" ] && cur=1
+
+total=$(printf '%s\n' "$out" | grep -cE '^ *\*? *[0-9]+ *$')
+[ "$total" -eq 0 ] 2>/dev/null && total=1
+
+cg=$(glyph "$cur")
+tg=$(glyph "$total")
+
+printf '<span color="#D19A59">%s</span> %s' "$cg" "$tg"

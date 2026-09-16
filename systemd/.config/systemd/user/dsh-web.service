@@ -3,9 +3,9 @@ Description=DeepSeek Harness Web UI
 
 [Service]
 Type=simple
-WorkingDirectory=/home/explosivitea/Desktop/B1/reposet/deepseek-harness
-Environment=PATH=/home/explosivitea/.nvm/versions/node/v22.22.0/bin:/usr/local/bin:/usr/bin:/usr/local/sbin
-ExecStart=/home/explosivitea/.nvm/versions/node/v22.22.0/bin/pnpm dsh web
+WorkingDirectory=%h/Desktop/B1/reposet/deepseek-harness
+Environment=PATH=%h/.nvm/versions/node/v22.22.0/bin:/usr/local/bin:/usr/bin:/usr/local/sbin
+ExecStart=%h/.nvm/versions/node/v22.22.0/bin/npx --yes --prefix %h @deepseek-ai/dsh web --no-open
 Restart=on-failure
 
 [Install]

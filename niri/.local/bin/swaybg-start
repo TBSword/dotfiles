@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /usr/bin/swaybg -m fill -i "/home/explosivitea/Pictures/潮式鮑魚迷你裹蒸粽2.jpg"
+exec /usr/bin/swaybg -m fill -i "$HOME/Pictures/潮式鮑魚迷你裹蒸粽2.jpg"

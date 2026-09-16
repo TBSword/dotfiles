@@ -1,0 +1,5 @@
+#!/bin/sh
+# niri-sys — CPU / 内存使用率
+cpu=$(top -bn1 | awk '/^%Cpu/{printf "%d", 100-$8}')
+mem=$(free | awk '/Mem/{printf "%d", $3/$2*100}')
+printf ' %s%%  󰔸 %s%%' "$cpu" "$mem"

@@ -1,0 +1,27 @@
+#!/bin/bash
+# Improved tmux-yazi: a kitty window with a tmux session containing
+# - yazi window (in the repo directory)
+# - zsh window (in the repo directory)
+# Reuses the session if it already exists instead of spawning duplicates.
+set -u
+
+REPO="$HOME/Desktop/Ferrous/terraria_ig/repo/sp21-s456"
+SESSION="yazi-sp21-s456"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  # Session already exists: make sure both windows are present.
+  if ! tmux list-windows -t "$SESSION" -F '#{window_name}' 2>/dev/null | grep -qx 'yazi'; then
+    tmux new-window -t "$SESSION" -n yazi -c "$REPO" yazi
+  fi
+  if ! tmux list-windows -t "$SESSION" -F '#{window_name}' 2>/dev/null | grep -qx 'zsh'; then
+    tmux new-window -t "$SESSION" -n zsh -c "$REPO" zsh
+  fi
+else
+  # Create the session detached with both windows, then attach in kitty.
+  tmux new-session -d -s "$SESSION" -n yazi -c "$REPO" yazi
+  tmux new-window -t "$SESSION" -n zsh -c "$REPO" zsh
+fi
+
+exec kitty -e tmux attach-session -t "$SESSION"
