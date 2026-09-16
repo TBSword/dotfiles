@@ -8,7 +8,7 @@ import argparse
 from pathlib import Path
 from meilisearch import Client
 
-NOTES_DIR = Path("/home/explosivitea/Desktop/B1/notes")
+NOTES_DIR = Path.home() / "Desktop/B1/notes"
 MEILI_URL = "http://127.0.0.1:7700"
 MASTER_KEY = "local-dev-key-change-me"
 INDEX_NAME = "notes"

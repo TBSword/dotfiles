@@ -7,7 +7,7 @@ import subprocess
 import hashlib
 from pathlib import Path
 
-WATCH_DIR = Path("/home/explosivitea/Desktop/B1/notes")
+WATCH_DIR = Path.home() / "Desktop/B1/notes"
 INDEX_SCRIPT = Path.home() / ".local/bin/index-notes"
 DEBOUNCE = 2.0
 IGNORE = {".git", ".obsidian", ".trash", ".DS_Store"}

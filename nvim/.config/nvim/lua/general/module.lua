@@ -1,5 +1,5 @@
 -- ocp-indent (OCaml) indentation plugin
-vim.opt.rtp:append('/home/explosivitea/.opam/cs3110-2026sp/share/ocp-indent/vim')
+vim.opt.rtp:append(vim.fn.expand("~/.opam/cs3110-2026sp/share/ocp-indent/vim"))
 
 -- Sync with system clipboard
 vim.opt.clipboard = 'unnamedplus'

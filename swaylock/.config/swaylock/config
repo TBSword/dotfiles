@@ -1,4 +1,4 @@
-image=/home/explosivitea/Pictures/monastairs_desktop_final.png
+image=$HOME/Pictures/monastairs_desktop_final.png
 scaling=fill
 
 font="JetBrainsMono Nerd Font"
