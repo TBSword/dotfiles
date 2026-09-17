@@ -10,34 +10,14 @@ fi
 [ -n "$default" ] && [ -f "$default" ] || default="$HOME/Pictures/潮式鮑魚迷你裹蒸粽2.jpg"
 
 image=""
-if [ "$#" -gt 0 ]; then
-    image=$1
-fi
-if [ -z "$image" ] && [ -r "$state_file" ]; then
+if [ -r "$state_file" ]; then
     image=$(cat "$state_file" 2>/dev/null || true)
 fi
 if [ -z "$image" ] || [ ! -f "$image" ]; then
     image=$default
 fi
 
-if [ ! -f "$image" ]; then
-    exec /usr/bin/swaybg -c '#1c2320'
+if [ -f "$image" ]; then
+    exec /usr/bin/swaylock -f -i "$image"
 fi
-
-image=$(readlink -f "$image")
-state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper"
-mkdir -p "$state_dir"
-printf '%s\n' "$image" > "$state_file"
-
-pkill -x swaybg 2>/dev/null || true
-i=0
-while pgrep -x swaybg >/dev/null 2>&1; do
-    i=$((i + 1))
-    if [ "$i" -ge 20 ]; then
-        pkill -9 -x swaybg 2>/dev/null || true
-        break
-    fi
-    sleep 0.05
-done
-
-exec /usr/bin/swaybg -m fill -i "$image"
+exec /usr/bin/swaylock -f

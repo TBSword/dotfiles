@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -ne 1 ]; then
+    printf 'usage: wallpaper-set <image>\n' >&2
+    exit 1
+fi
+
+if [ ! -f "$1" ]; then
+    printf 'wallpaper not found: %s\n' "$1" >&2
+    exit 1
+fi
+
+if command -v swaybg-start >/dev/null 2>&1; then
+    exec swaybg-start "$1"
+fi
+exec "$HOME/dotfiles/niri/.local/bin/swaybg-start" "$1"

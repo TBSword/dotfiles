@@ -1,4 +1,4 @@
 timeout 570 'notify-send -u critical -t 10000 "Screen will lock in 30s"'
-timeout 600 'swaylock -f'
+timeout 600 'if command -v lock-screen >/dev/null 2>&1; then exec lock-screen; else exec "$HOME/dotfiles/niri/.local/bin/lock-screen"; fi'
 timeout 601 'niri msg action power-off-monitors'
-before-sleep 'swaylock -f'
+before-sleep 'if command -v lock-screen >/dev/null 2>&1; then exec lock-screen; else exec "$HOME/dotfiles/niri/.local/bin/lock-screen"; fi'

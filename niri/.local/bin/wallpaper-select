@@ -1,0 +1,65 @@
+#!/bin/sh
+set -eu
+
+preferred="${WALLPAPER_DIR:-$HOME/Pictures/wallpapers}"
+fallback="$HOME/Pictures"
+dir=$fallback
+
+if [ -d "$preferred" ] && find -L "$preferred" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) -print -quit | grep -q .; then
+    dir=$preferred
+fi
+
+list_file=$(mktemp)
+trap 'rm -f "$list_file"' EXIT
+find -L "$dir" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) -printf '%p\n' | sort > "$list_file"
+
+thumb_dir="${XDG_CACHE_HOME:-$HOME/.cache}/wallpaper-thumbs"
+if ! mkdir -p "$thumb_dir" 2>/dev/null; then
+    thumb_dir="${XDG_RUNTIME_DIR:-/tmp}/wallpaper-thumbs"
+    if ! mkdir -p "$thumb_dir" 2>/dev/null; then
+        thumb_dir=""
+    fi
+fi
+
+magick_available=0
+if command -v magick >/dev/null 2>&1 && [ -n "$thumb_dir" ]; then
+    magick_available=1
+fi
+
+preview_args=""
+if [ "$magick_available" -eq 1 ]; then
+    preview_args="--line-height=80 --lines=10 --width=56"
+fi
+
+choice_index=$(
+    {
+        while IFS= read -r file; do
+            name=${file##*/}
+            if [ "$magick_available" -eq 1 ]; then
+                thumb="$thumb_dir/$(printf '%s' "$file" | md5sum | cut -d' ' -f1).png"
+                if [ ! -f "$thumb" ] || [ "$file" -nt "$thumb" ]; then
+                    magick "$file" -auto-orient -thumbnail '320x180^' -gravity center -extent 320x180 -strip "$thumb" 2>/dev/null || true
+                fi
+                if [ -f "$thumb" ]; then
+                    printf '%s\0icon\x1f%s\n' "$name" "$thumb"
+                    continue
+                fi
+            fi
+            printf '%s\n' "$name"
+        done < "$list_file"
+    } | fuzzel --dmenu --prompt 'Wallpaper > ' $preview_args --index --only-match --no-run-if-empty || true
+)
+
+if [ -z "$choice_index" ]; then
+    exit 0
+fi
+
+selected=$(sed -n "$((choice_index + 1))p" "$list_file")
+if [ -z "$selected" ] || [ ! -f "$selected" ]; then
+    exit 1
+fi
+
+if command -v swaybg-start >/dev/null 2>&1; then
+    exec swaybg-start "$selected"
+fi
+exec "$HOME/dotfiles/niri/.local/bin/swaybg-start" "$selected"
