@@ -1,0 +1,4 @@
+I ran 
+git update-index --skip-worktree niri/.config/niri/profile.kdl
+on 20260919
+and idk how I can remember it
