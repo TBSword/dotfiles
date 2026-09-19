@@ -413,6 +413,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
+    Mod+Shift+X hotkey-overlay-title="Switch Shell Profile" { spawn-sh "if command -v niri-shell-switch >/dev/null 2>&1; then exec niri-shell-switch toggle; else exec \"$HOME/dotfiles/niri/.local/bin/niri-shell-switch\" toggle; fi"; }
     Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Z hotkey-overlay-title="Open DSH Web" { spawn-sh "exec \"$HOME/.local/bin/dsh-web-open\""; }
     Mod+Y hotkey-overlay-title="Open Yazi" { spawn "tmux-yazi"; };

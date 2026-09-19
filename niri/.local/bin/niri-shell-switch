@@ -1,0 +1,87 @@
+#!/bin/sh
+set -eu
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/niri"
+profile_file="$config_dir/profile.kdl"
+
+usage() {
+    echo "usage: niri-shell-switch {glue|noctalia|toggle}" >&2
+    exit 2
+}
+
+current_profile() {
+    if [ -r "$profile_file" ]; then
+        sed -n 's/^[[:space:]]*include[[:space:]]*"profiles\/\([^"]*\)\.kdl"[[:space:]]*$/\1/p' "$profile_file" | head -n 1
+    fi
+}
+
+set_profile() {
+    case "$1" in
+        glue|noctalia) ;;
+        *) usage ;;
+    esac
+    printf 'include "profiles/%s.kdl"\n' "$1" > "$profile_file"
+}
+
+stop_all() {
+    pkill -x noctalia 2>/dev/null || true
+    pkill -x waybar 2>/dev/null || true
+    pkill -x swaybg 2>/dev/null || true
+    pkill -x swayidle 2>/dev/null || true
+    pkill -x vicinae 2>/dev/null || true
+    pkill -f 'vicinae-server' 2>/dev/null || true
+}
+
+start_bg() {
+    if command -v setsid >/dev/null 2>&1; then
+        setsid "$@" </dev/null >/dev/null 2>&1 &
+    else
+        nohup "$@" </dev/null >/dev/null 2>&1 &
+    fi
+}
+
+reload_niri() {
+    if command -v niri >/dev/null 2>&1; then
+        niri msg action load-config-file >/dev/null 2>&1 || true
+    fi
+}
+
+start_glue() {
+    start_bg waybar
+    start_bg swaybg-start
+    start_bg swayidle-start
+    start_bg vicinae server
+}
+
+start_noctalia() {
+    start_bg noctalia --daemon
+}
+
+target="${1:-toggle}"
+
+case "$target" in
+    toggle)
+        case "$(current_profile)" in
+            glue) target=noctalia ;;
+            *) target=glue ;;
+        esac
+        ;;
+    glue|noctalia) ;;
+    *) usage ;;
+esac
+
+set_profile "$target"
+reload_niri
+stop_all
+sleep 0.3
+
+case "$target" in
+    glue)
+        start_glue
+        echo "switched to glue"
+        ;;
+    noctalia)
+        start_noctalia
+        echo "switched to noctalia"
+        ;;
+esac
