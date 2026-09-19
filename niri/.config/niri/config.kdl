@@ -414,7 +414,7 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
-    Mod+Z hotkey-overlay-title="Open DSH Web" { spawn "/home/explosivitea/dotfiles/bin/dsh-web-open"; }
+    Mod+Z hotkey-overlay-title="Open DSH Web" { spawn-sh "exec \"$HOME/.local/bin/dsh-web-open\""; }
     Mod+Y hotkey-overlay-title="Open Yazi" { spawn "tmux-yazi"; };
     Mod+Shift+W hotkey-overlay-title="Select Wallpaper" { spawn-sh "if command -v wallpaper-select >/dev/null 2>&1; then exec wallpaper-select; else exec \"$HOME/dotfiles/niri/.local/bin/wallpaper-select\"; fi"; }
     Mod+D repeat=false hotkey-overlay-title="Run an Application: vicinae" { spawn "vicinae" "toggle"; }
