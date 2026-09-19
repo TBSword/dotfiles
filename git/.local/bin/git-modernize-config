@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+
+if ! command -v delta >/dev/null 2>&1; then
+  echo "未找到 delta，请先安装 git-delta" >&2
+  exit 1
+fi
+
+if [[ -f "$HOME/.gitconfig" ]]; then
+  bk="$HOME/.gitconfig.bak.$(date +%Y%m%d-%H%M%S)"
+  cp -- "$HOME/.gitconfig" "$bk"
+  echo "已备份: $bk"
+fi
+
+git config --global core.pager delta
+git config --global interactive.diffFilter 'delta --color-only'
+git config --global delta.navigate true
+git config --global delta.line-numbers true
+git config --global merge.conflictStyle zdiff3
+git config --global diff.algorithm histogram
+
+echo "已更新 git 全局配置："
+git config --global --list | grep -iE '^(core\.pager|interactive\.difffilter|delta\.(navigate|line-numbers)|merge\.conflictstyle|diff\.algorithm)='
