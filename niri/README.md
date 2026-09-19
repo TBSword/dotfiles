@@ -201,7 +201,7 @@ Noctalia 启动包装脚本：
 | 组件 | 路径/说明 |
 |---|---|
 | Niri 配置 | `~/.config/niri` → `~/dotfiles/niri/.config/niri` |
-| Noctalia 手写配置 | `~/.config/noctalia/`，当前为空 |
+| Noctalia 手写配置 | `~/dotfiles/noctalia/.config/noctalia/`，部署到 `~/.config/noctalia` |
 | Noctalia GUI 状态 | `~/.local/state/noctalia/settings.toml` |
 | Noctalia 运行时状态 | `~/.local/state/noctalia/state.toml` |
 | Noctalia 日志 | `~/.cache/noctalia/noctalia.log` |
@@ -266,7 +266,8 @@ noctalia config validate
 
 2. **Noctalia GUI 状态优先**  
    `~/.local/state/noctalia/settings.toml` 是 GUI 管理的覆盖层，优先级高于 `~/.config/noctalia/*.toml`。  
-   Noctalia 手写配置如果发现不生效，需要检查这个文件。
+   Noctalia 手写配置放在 `~/dotfiles/noctalia/.config/noctalia/`，通过符号链接部署到
+   `~/.config/noctalia/`。如果发现手写配置不生效，需要检查 `settings.toml` 中的覆盖键。
 
 3. **两套 Shell 的旧组件并存**  
    Waybar、DMS、matugen、swaybg、swayidle、vicinae、mako 仍存在于系统中。  
