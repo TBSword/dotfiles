@@ -175,3 +175,5 @@ echo "       [Z] [X] [C] [V] [B]   [K] [M] [,] [.] [/]          "
 export REPO_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/sp21-s456"
 export SNAPS_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/snaps-sp21-s456"
 
+
+[[ -r "$HOME/.config/zsh/modern.zsh" ]] && source "$HOME/.config/zsh/modern.zsh"
