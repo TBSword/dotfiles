@@ -24,6 +24,7 @@ set_profile() {
 }
 
 stop_all() {
+    pkill -x mako 2>/dev/null || true
     pkill -x noctalia 2>/dev/null || true
     pkill -x waybar 2>/dev/null || true
     pkill -x swaybg 2>/dev/null || true
@@ -47,6 +48,7 @@ reload_niri() {
 }
 
 start_glue() {
+    start_bg mako
     start_bg waybar
     start_bg swaybg-start
     start_bg swayidle-start
@@ -54,7 +56,7 @@ start_glue() {
 }
 
 start_noctalia() {
-    start_bg noctalia --daemon
+    start_bg "$HOME/dotfiles/niri/.local/bin/noctalia-start" --daemon
 }
 
 target="${1:-toggle}"

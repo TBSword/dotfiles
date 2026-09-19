@@ -12,7 +12,7 @@ environment {
     XMODIFIERS "@im=fcitx"
 }
 spawn-at-startup "fcitx5"
-spawn-at-startup "noctalia"
+spawn-sh-at-startup "exec $HOME/dotfiles/niri/.local/bin/noctalia-start"
 
 prefer-no-csd
 

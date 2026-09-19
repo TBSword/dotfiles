@@ -1,0 +1,32 @@
+#!/bin/sh
+# Start Noctalia after ensuring mako does not own the notification bus.
+#
+# mako is only used by the glue profile and is started there explicitly.
+# This shim removes the old systemd user autostart link at first Noctalia
+# startup, so a fresh logout/login does not let mako race Noctalia for
+# org.freedesktop.Notifications.
+
+mako_want="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/niri.service.wants/mako.service"
+
+if command -v systemctl >/dev/null 2>&1; then
+    if [ -L "$mako_want" ] || systemctl --user is-enabled --quiet mako.service 2>/dev/null; then
+        systemctl --user disable --now mako.service >/dev/null 2>&1 || true
+    fi
+fi
+
+# systemd may already have started mako for this session. Stop it and give
+# the service a short chance to settle before launching Noctalia.
+i=0
+while [ "$i" -lt 20 ]; do
+    if command -v pkill >/dev/null 2>&1; then
+        pkill -x mako 2>/dev/null || true
+    fi
+    if command -v pgrep >/dev/null 2>&1 && pgrep -x mako >/dev/null 2>&1; then
+        i=$((i + 1))
+        sleep 0.1
+        continue
+    fi
+    break
+done
+
+exec noctalia "$@"
