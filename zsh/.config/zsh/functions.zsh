@@ -88,3 +88,34 @@ echo "       [Z] [X] [C] [V] [B]   [K] [M] [,] [.] [/]          "
 # 项目环境变量
 export REPO_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/sp21-s456"
 export SNAPS_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/snaps-sp21-s456"
+
+# xl: 执行后续命令，并将该命令以可复用形式追加到 yeah.sh（按天追加 #YYYYMMDD 注释）
+xl() {
+  local logfile="$HOME/Documents/Xtea_log/yeah.sh"
+  local dir=${logfile%/*}
+  local today last_date cmd
+  if [ "$#" -eq 0 ]; then
+    return 0
+  fi
+
+  cmd=$(printf '%q ' "$@")
+  cmd=${cmd% }
+
+  if mkdir -p -- "$dir"; then
+    today="#$(date +%Y%m%d)"
+    last_date=$(grep -E '^#[0-9]{8}$' "$logfile" 2>/dev/null | tail -n 1)
+    {
+      if [ "$last_date" != "$today" ]; then
+        if [ -s "$logfile" ]; then
+          printf '\n'
+        fi
+        printf '%s\n' "$today"
+      fi
+      printf '%s\n' "$cmd"
+    } >> "$logfile" || printf 'xl: 无法写入日志：%s\n' "$logfile" >&2
+  else
+    printf 'xl: 无法创建日志目录：%s\n' "$dir" >&2
+  fi
+
+  eval "$cmd"
+}
