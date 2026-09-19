@@ -28,6 +28,14 @@ ln -s ../dotfiles/noctalia/.config/noctalia ~/.config/noctalia
 
 如果目录里已有内容，先备份再替换。
 
+## 当前已启用
+
+- `[backdrop] enabled = true`
+- `[dock] enabled = true`，底部 Dock，自动隐藏
+- `[location]`：鸟取，`Tottori, Japan` / `35.5011, 134.2377`
+- `[weather] enabled = true`，单位为 metric
+- `[bar.default].center` 包含 `weather` widget
+
 ## 配置优先级
 
 Noctalia 当前分两层：

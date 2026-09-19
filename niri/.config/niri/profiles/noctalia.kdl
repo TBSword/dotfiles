@@ -391,14 +391,36 @@ window-rule {
 }
 
 
-// Example: enable rounded corners for all windows.
-// (This example rule is commented out with a "/-" in front.)
-/-window-rule {
-    geometry-corner-radius 12
+// Modern rounded corners for all windows.
+window-rule {
+    geometry-corner-radius 4
     clip-to-geometry true
 }
 
 
+
+// Noctalia overview backdrop.
+layer-rule {
+    match namespace="^noctalia-backdrop"
+    place-within-backdrop true
+}
+
+// Keep Noctalia layer surfaces on real background blur instead of xray.
+layer-rule {
+    match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+    background-effect {
+        xray false
+    }
+}
+
+// Noctalia window switcher requests blur itself.
+layer-rule {
+    match namespace="noctalia-window-switcher"
+    background-effect {
+        blur true
+        xray false
+    }
+}
 
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
@@ -422,6 +444,12 @@ binds {
     Mod+Y hotkey-overlay-title="Open Yazi" { spawn "tmux-yazi"; };
     Mod+Shift+W hotkey-overlay-title="Noctalia Wallpaper" { spawn-sh "noctalia msg panel-toggle wallpaper"; }
     Mod+D repeat=false hotkey-overlay-title="Noctalia Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+Space repeat=false hotkey-overlay-title="Noctalia Dock" { spawn-sh "noctalia msg dock-toggle"; }
+    Mod+Shift+S hotkey-overlay-title="Noctalia Settings" { spawn-sh "noctalia msg settings-toggle"; }
+    Alt+Tab repeat=false hotkey-overlay-title="Noctalia Window Switcher" { spawn-sh "noctalia msg window-switcher"; }
+    Mod+S repeat=false hotkey-overlay-title="Noctalia Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
+    Mod+Ctrl+V repeat=false hotkey-overlay-title="Noctalia Clipboard" { spawn-sh "noctalia msg panel-toggle clipboard"; }
+    Mod+Shift+Q repeat=false hotkey-overlay-title="Noctalia Session" { spawn-sh "noctalia msg panel-toggle session"; }
     Mod+G hotkey-overlay-title="Open Goldendict" { spawn "goldendict"; }
     Mod+N hotkey-overlay-title="Open Network Manager: nmtui" { spawn "kitty" "--class" "nmtui" "nmtui"; }
     Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen" { spawn-sh "noctalia msg session lock"; }
@@ -660,9 +688,9 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
+    Print { spawn-sh "noctalia msg screenshot-region"; }
+    Ctrl+Print { spawn-sh "noctalia msg screenshot-fullscreen"; }
+    Alt+Print { spawn-sh "noctalia msg screenshot-annotate"; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here

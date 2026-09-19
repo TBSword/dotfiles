@@ -117,12 +117,31 @@ window-rule {
 ```
 
 - 开启了 `honor-xdg-activation-with-invalid-serial`，用于 Noctalia 通知 action 和窗口激活。
+- 所有普通窗口启用 20px 圆角和 `clip-to-geometry`。
+- 启用 Noctalia Dock：`auto_hide = true`，通过 `Mod+Space` 调用 `dock-toggle`。
+- 为 Noctalia 增加了 layer-rule：
+
+```kdl
+^noctalia-backdrop        -> place-within-backdrop
+^noctalia-(bar-...|...)   -> background-effect xray false
+noctalia-window-switcher  -> blur true + xray false
+```
+
 - 键位改为通过 Noctalia IPC：
 
 ```kdl
 Mod+D        -> noctalia msg panel-toggle launcher
+Mod+Space    -> noctalia msg dock-toggle
+Mod+S        -> noctalia msg panel-toggle control-center
+Mod+Ctrl+V   -> noctalia msg panel-toggle clipboard
+Mod+Shift+Q  -> noctalia msg panel-toggle session
+Mod+Shift+S  -> noctalia msg settings-toggle
+Alt+Tab      -> noctalia msg window-switcher
 Mod+Shift+W  -> noctalia msg panel-toggle wallpaper
 Super+Alt+L  -> noctalia msg session lock
+Print        -> noctalia msg screenshot-region
+Ctrl+Print   -> noctalia msg screenshot-fullscreen
+Alt+Print    -> noctalia msg screenshot-annotate
 音量/亮度/媒体 -> noctalia msg ...
 ```
 

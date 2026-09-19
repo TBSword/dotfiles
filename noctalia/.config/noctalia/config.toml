@@ -55,6 +55,43 @@ transition_duration = 1200
 # [wallpaper.default]
 # path = "~/Pictures/wallpapers/looming_cat.jpg"
 
+[backdrop]
+enabled        = true
+blur_intensity = 0.5
+tint_intensity = 0.3
+
+[dock]
+enabled              = true
+position             = "bottom"
+active_monitor_only  = false
+monitors             = []
+icon_size            = 48
+main_axis_padding    = 16
+cross_axis_padding   = 8
+item_spacing         = 6
+background_opacity   = 0.88
+border               = "outline"
+border_width         = 1.0
+radius               = 18
+concave_edge_corners = true
+margin_ends          = 0
+margin_edge          = 0
+show_running         = true
+auto_hide            = true
+smart_auto_hide      = false
+reserve_space        = false
+layer                = "overlay"
+active_scale         = 1.0
+inactive_scale       = 0.85
+magnification        = true
+magnification_scale  = 1.45
+active_opacity       = 1.0
+inactive_opacity     = 0.85
+show_instance_count  = true
+show_dots            = false
+launcher_position    = "none"
+pinned               = []
+
 [bar.default]
 position             = "top"
 thickness            = 34
@@ -65,7 +102,7 @@ radius               = 14
 concave_edge_corners = true
 
 start  = ["launcher", "workspaces", "active_window"]
-center = ["media", "clock"]
+center = ["media", "clock", "weather"]
 end    = ["tray", "clipboard", "cpu", "ram", "notifications", "battery", "control-center"]
 
 [widget.active_window]
@@ -84,6 +121,11 @@ focused_output_only = true
 [widget.media]
 artist_first       = true
 hide_when_no_media = true
+
+[widget.weather]
+show_condition   = false
+show_temperature = true
+max_length       = 160
 
 [widget.cpu]
 type          = "sysmon"
@@ -130,16 +172,19 @@ lock_before_suspend = true
 fingerprint         = false
 blurred_desktop     = false
 
-# 位置和天气当前没有配置。设置好城市或坐标后，再启用 weather。
-# [location]
-# auto_locate = false
-# address     = "Shanghai, China"
-# latitude    = 31.2304
-# longitude   = 121.4737
-#
-# [weather]
-# enabled = true
-# unit    = "metric"
+# 鸟取（Tottori）天气与位置。
+# address 用于显示和地理编码；latitude/longitude 是 Tottori 市的兜底坐标。
+[location]
+auto_locate = false
+address     = "Tottori, Japan"
+latitude    = 35.5011
+longitude   = 134.2377
+
+[weather]
+enabled         = true
+refresh_minutes = 30
+unit            = "metric"
+effects         = true
 
 # 应用主题模板当前未启用，避免和旧 DMS / matugen 配置打架。
 # 先安装 adw-gtk3 / nwg-look / qt6ct-kde，再用 noctalia theme --list-templates 确认 ID。
