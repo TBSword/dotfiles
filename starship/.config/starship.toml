@@ -1,0 +1,62 @@
+# 简洁、快速、适配当前终端与 Nerd Font 的 Starship 配置
+add_newline = false
+scan_timeout = 10
+command_timeout = 1000
+format = """
+[](fg:#7aa2f7)$os$username$hostname$directory$git_branch$git_status$nix_shell$cmd_duration
+$character"""
+
+[os]
+disabled = true
+
+[username]
+style_user = "fg:#c0caf5"
+style_root = "fg:#f7768e bold"
+format = "[$user]($style)"
+show_always = false
+
+[hostname]
+ssh_only = true
+format = " at [@$hostname](fg:#565f89)"
+disabled = false
+
+[directory]
+style = "fg:#7aa2f7"
+format = "[$path]($style)[$read_only]($read_only_style) "
+read_only = " RO"
+truncation_length = 4
+truncate_to_repo = true
+
+[git_branch]
+symbol = " "
+style = "fg:#bb9af7"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "fg:#e0af68"
+format = "[$all_status$ahead_behind]($style) "
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = "$${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+[nix_shell]
+style = "fg:#9ece6a"
+format = " [$symbol$state]($style)"
+symbol = " "
+
+[cmd_duration]
+min_time = 2000
+style = "fg:#565f89"
+format = " took [$duration]($style)"
+
+[character]
+success_symbol = "[❯](bold fg:#9ece6a)"
+error_symbol = "[❯](bold fg:#f7768e)"
+vimcmd_symbol = "[❮](bold fg:#9ece6a)"
