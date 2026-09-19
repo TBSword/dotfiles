@@ -1,0 +1,14 @@
+[config]
+fallback_color = "#D9C2A5"
+prefer = "closest-to-fallback"
+source_color_index = 0
+caching = false
+
+[config.wallpaper]
+set = false
+command = ""
+
+[templates.waybar]
+input_path = "templates/waybar.css"
+output_path = "~/.config/waybar/colors.css"
+post_hook = "pkill -SIGUSR2 -x waybar 2>/dev/null || true"

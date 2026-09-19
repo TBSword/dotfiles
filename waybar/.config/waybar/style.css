@@ -1,3 +1,6 @@
+@import "colors-fallback.css";
+@import "colors.css";
+
 /* ── Font ─────────────────────────────────────────────────── */
 * {
     font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK SC", sans-serif;
@@ -8,9 +11,9 @@
 
 /* ── Bar ──────────────────────────────────────────────────── */
 window#waybar {
-    background-color: #14160f;
+    background-color: @bg;
     border-radius: 0;
-    color: #D9C2A5;
+    color: @fg;
     transition-property: background-color;
     transition-duration: 0.3s;
 }
@@ -20,7 +23,7 @@ window#waybar.hidden {
 }
 
 window#waybar.empty {
-    background-color: #10120c;
+    background-color: @bg_alt;
 }
 
 /* ── Buttons (modules) ────────────────────────────────────── */
@@ -31,8 +34,8 @@ button {
 }
 
 button:hover {
-    background: rgba(217, 194, 165, 0.10);
-    box-shadow: inset 0 -2px rgba(217, 194, 165, 0.18);
+    background: alpha(@accent, 0.10);
+    box-shadow: inset 0 -2px alpha(@accent, 0.18);
     border: none;
 }
 
@@ -58,19 +61,19 @@ button:hover {
 }
 
 #idle_inhibitor.activated {
-    background-color: rgba(217, 194, 165, 0.10);
-    color: #9A8B6F;
+    background-color: alpha(@accent, 0.10);
+    color: @fg_dim;
 }
 
 /* ── System stats ─────────────────────────────────────────── */
 #custom-sys {
-    color: #D9C2A5;
+    color: @fg;
 }
 
 #custom-temp {
     min-width: 0;
     padding: 0 6px;
-    color: #E08A66;
+    color: @warning;
 }
 
 /* ── Network ──────────────────────────────────────────────── */
@@ -79,23 +82,23 @@ button:hover {
 }
 
 #network.disconnected {
-    background-color: rgba(196, 96, 74, 0.18);
-    color: #E08A66;
+    background-color: alpha(@critical, 0.18);
+    color: @critical;
 }
 
 /* ── WirePlumber ──────────────────────────────────────────── */
 #wireplumber.muted {
-    background-color: rgba(217, 194, 165, 0.05);
-    color: rgba(217, 194, 165, 0.35);
+    background-color: alpha(@accent, 0.05);
+    color: alpha(@accent, 0.35);
 }
 
 #wireplumber.bluetooth {
-    background-color: rgba(111, 156, 79, 0.18);
+    background-color: alpha(@success, 0.18);
 }
 
 /* ── Backlight ────────────────────────────────────────────── */
 #backlight {
-    color: #D19A59;
+    color: @warning;
 }
 
 /* ── Keyboard state ───────────────────────────────────────── */
@@ -109,12 +112,12 @@ button:hover {
 }
 
 #keyboard-state > label.locked {
-    color: #6f9c4f;
+    color: @success;
 }
 
 /* ── Clock ────────────────────────────────────────────────── */
 #clock {
-    color: #D9C2A5;
+    color: @fg;
     font-weight: 600;
 }
 
@@ -130,13 +133,13 @@ button:hover {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: rgba(196, 96, 74, 0.22);
+    background-color: alpha(@critical, 0.22);
     border-radius: 6px;
 }
 
 /* ── MPRIS ─────────────────────────────────────────────────── */
 #mpris {
-    color: #D9C2A5;
+    color: @fg;
     min-width: 80px;
 }
 
@@ -147,23 +150,23 @@ button:hover {
 }
 
 #custom-power:hover {
-    background-color: rgba(196, 96, 74, 0.20);
-    color: #E08A66;
+    background-color: alpha(@critical, 0.20);
+    color: @critical;
 }
 
 /* ── Tooltips ─────────────────────────────────────────────── */
 tooltip {
-    background: #161810;
-    border: 1px solid rgba(217, 194, 165, 0.12);
+    background: @bg_alt;
+    border: 1px solid alpha(@fg, 0.12);
     border-radius: 8px;
-    color: #D9C2A5;
+    color: @fg;
     padding: 8px 12px;
     box-shadow: none;
 }
 
 tooltip label {
     font-family: "Noto Sans CJK SC", "JetBrainsMono Nerd Font", sans-serif;
-    color: #D9C2A5;
+    color: @fg;
     font-size: 13px;
     font-weight: 400;
     text-shadow: none;

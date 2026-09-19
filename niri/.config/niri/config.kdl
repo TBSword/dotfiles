@@ -15,6 +15,9 @@ spawn-at-startup "fcitx5"
 spawn-at-startup "swaybg-start"
 spawn-at-startup "waybar"
 spawn-at-startup "swayidle-start"
+
+prefer-no-csd
+
 input {
     keyboard {
         xkb {
