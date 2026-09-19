@@ -30,7 +30,6 @@ mkdir -p "$state_dir"
 printf '%s\n' "$image" > "$state_file"
 
 matugen_config="$HOME/.config/matugen/config.toml"
-[ -f "$matugen_config" ] || matugen_config="$HOME/dotfiles/matugen/.config/matugen/config.toml"
 if command -v matugen >/dev/null 2>&1 && [ -f "$matugen_config" ]; then
     matugen -q -m dark -c "$matugen_config" image "$image" >/dev/null 2>&1 || true
 fi

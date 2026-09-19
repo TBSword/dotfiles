@@ -62,4 +62,4 @@ fi
 if command -v swaybg-start >/dev/null 2>&1; then
     exec swaybg-start "$selected"
 fi
-exec "$HOME/dotfiles/niri/.local/bin/swaybg-start" "$selected"
+exec "$HOME/.local/bin/swaybg-start" "$selected"

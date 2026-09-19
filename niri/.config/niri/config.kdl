@@ -416,11 +416,11 @@ binds {
     Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Z hotkey-overlay-title="Open DSH Web" { spawn-sh "exec \"$HOME/.local/bin/dsh-web-open\""; }
     Mod+Y hotkey-overlay-title="Open Yazi" { spawn "tmux-yazi"; };
-    Mod+Shift+W hotkey-overlay-title="Select Wallpaper" { spawn-sh "if command -v wallpaper-select >/dev/null 2>&1; then exec wallpaper-select; else exec \"$HOME/dotfiles/niri/.local/bin/wallpaper-select\"; fi"; }
+    Mod+Shift+W hotkey-overlay-title="Select Wallpaper" { spawn-sh "if command -v wallpaper-select >/dev/null 2>&1; then exec wallpaper-select; else exec \"$HOME/.local/bin/wallpaper-select\"; fi"; }
     Mod+D repeat=false hotkey-overlay-title="Run an Application: vicinae" { spawn "vicinae" "toggle"; }
     Mod+G hotkey-overlay-title="Open Goldendict" { spawn "goldendict"; }
     Mod+N hotkey-overlay-title="Open Network Manager: nmtui" { spawn "kitty" "--class" "nmtui" "nmtui"; }
-    Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen" { spawn-sh "if command -v lock-screen >/dev/null 2>&1; then exec lock-screen; else exec \"$HOME/dotfiles/niri/.local/bin/lock-screen\"; fi"; }
+    Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen" { spawn-sh "if command -v lock-screen >/dev/null 2>&1; then exec lock-screen; else exec \"$HOME/.local/bin/lock-screen\"; fi"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
