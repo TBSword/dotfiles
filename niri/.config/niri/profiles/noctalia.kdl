@@ -1,0 +1,59 @@
+// Noctalia profile-specific overrides.
+// These are applied after the common config in config.kdl.
+
+environment {
+    NIRI_PROFILE "noctalia"
+}
+
+spawn-sh-at-startup "exec $HOME/dotfiles/niri/.local/bin/noctalia-start"
+
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
+
+// Keep Noctalia Settings floating.
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+
+// Modern rounded corners for all windows.
+window-rule {
+    geometry-corner-radius 4
+    clip-to-geometry true
+}
+
+// Noctalia overview backdrop.
+layer-rule {
+    match namespace="^noctalia-backdrop"
+    place-within-backdrop true
+}
+
+// Keep Noctalia layer surfaces on real background blur instead of xray.
+layer-rule {
+    match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+    background-effect {
+        xray false
+    }
+}
+
+// Noctalia window switcher requests blur itself.
+layer-rule {
+    match namespace="noctalia-window-switcher"
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+binds {
+    // Noctalia-only bindings. Shared keybindings live in config.kdl.
+    Mod+Space repeat=false hotkey-overlay-title="Noctalia Dock" { spawn-sh "noctalia msg dock-toggle"; }
+    Mod+Shift+S hotkey-overlay-title="Noctalia Settings" { spawn-sh "noctalia msg settings-toggle"; }
+    Alt+Tab repeat=false hotkey-overlay-title="Noctalia Window Switcher" { spawn-sh "noctalia msg window-switcher"; }
+    Mod+S repeat=false hotkey-overlay-title="Noctalia Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
+    Mod+Ctrl+V repeat=false hotkey-overlay-title="Noctalia Clipboard" { spawn-sh "noctalia msg panel-toggle clipboard"; }
+    Mod+Shift+Q repeat=false hotkey-overlay-title="Noctalia Session" { spawn-sh "noctalia msg panel-toggle session"; }
+}

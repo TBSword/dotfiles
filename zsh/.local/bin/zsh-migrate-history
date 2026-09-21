@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+
+NEW="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
+OLD="$HOME/.histfile"
+
+mkdir -p -- "$(dirname "$NEW")"
+
+if [[ -s "$OLD" ]]; then
+  if [[ -s "$NEW" ]]; then
+    cat -- "$OLD" >> "$NEW"
+  else
+    mv -- "$OLD" "$NEW"
+  fi
+  echo "history -> $NEW ($(wc -l < "$NEW") lines)"
+else
+  echo "no legacy ~/.histfile, skip"
+fi
+
+rm -f -- "$HOME/.zcompdump" && echo "removed ~/.zcompdump" || true

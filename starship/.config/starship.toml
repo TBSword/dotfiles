@@ -1,0 +1,7 @@
+# 保持 Starship 默认的目录、分支和状态布局，只调整超时与命令耗时显示。
+# 如需进一步定制，优先只覆盖具体模块字段，不要重写顶层 format。
+scan_timeout = 10
+command_timeout = 1000
+
+[cmd_duration]
+min_time = 2000

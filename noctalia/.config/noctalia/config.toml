@@ -1,0 +1,244 @@
+# Noctalia 手写基础配置
+#
+# 配置层级：
+#   1. ~/.config/noctalia/*.toml              ← 本文件所在层，适合放进 dotfiles
+#   2. ~/.local/state/noctalia/settings.toml  ← GUI 运行时覆盖层，优先级更高
+#
+# 因此：如果某个键在 settings.toml 里已存在，以 settings.toml 为准。
+# 需要让本文件生效时，请在 Noctalia GUI 中把对应项改成相同值，或移除 state 中的覆盖键。
+# 修改后可用：noctalia config validate
+
+[shell]
+# 当前系统可用字体；如果想使用 Inter，需要先安装对应字体包。
+font_family        = "Noto Sans CJK SC"
+time_format        = "{:%H:%M}"
+date_format        = "%Y-%m-%d"
+polkit_agent       = true   # 当前 Niri 会话没有常驻 polkit agent；若以后使用 KDE agent，请改回 false
+
+# telemetry_enabled 当前仍在 GUI state 中控制，这里不声明，避免造成“已关闭”的误解。
+# 如需关闭：Settings → Shell → Telemetry，或清理 settings.toml 中对应键后再取消注释。
+# telemetry_enabled = false
+
+[shell.panel]
+transparency_mode    = "soft"    # solid | soft | glass
+borders              = true
+shadow               = true
+launcher_placement   = "floating"
+control_center_placement = "attached"
+
+[shell.launcher]
+show_icons              = true
+show_app_origin_indicator = true
+compact                 = false
+app_grid                = false
+sort_by_usage           = true
+# pinned 使用 desktop entry id；需要时按实际应用修改。
+pinned                  = []
+
+[shell.screenshot]
+save_to_file      = true
+directory         = "~/Pictures/Screenshots"
+filename_pattern  = "screenshot_%Y%m%d_%H%M%S"
+copy_to_clipboard = true
+freeze_screen     = true
+annotate          = false
+
+[wallpaper]
+enabled             = true
+directory           = "~/Pictures/wallpapers"
+fill_mode           = "crop"
+transition          = ["fade", "zoom"]
+transition_duration = 1200
+
+# 当前 state 里已有 wallpaper.default.path，GUI/state 会覆盖这里。
+# 如果要固定默认壁纸，请在 GUI 中使用一次壁纸选择器，或清理 state 中的 override。
+# [wallpaper.default]
+# path = "~/Pictures/wallpapers/looming_cat.jpg"
+
+[backdrop]
+enabled        = true
+blur_intensity = 0.5
+tint_intensity = 0.3
+
+[dock]
+enabled              = true
+position             = "bottom"
+active_monitor_only  = false
+monitors             = []
+icon_size            = 48
+main_axis_padding    = 16
+cross_axis_padding   = 8
+item_spacing         = 6
+background_opacity   = 0.88
+border               = "outline"
+border_width         = 1.0
+radius               = 18
+concave_edge_corners = true
+margin_ends          = 0
+margin_edge          = 0
+show_running         = true
+auto_hide            = true
+smart_auto_hide      = false
+reserve_space        = false
+layer                = "overlay"
+active_scale         = 1.0
+inactive_scale       = 0.85
+magnification        = true
+magnification_scale  = 1.45
+active_opacity       = 1.0
+inactive_opacity     = 0.85
+show_instance_count  = true
+show_dots            = false
+launcher_position    = "none"
+pinned               = []
+
+[bar.default]
+position             = "top"
+thickness            = 34
+background_opacity   = 0.92
+border               = "outline"
+border_width         = 1.0
+radius               = 14
+concave_edge_corners = true
+
+start  = ["launcher", "workspaces", "active_window"]
+center = ["media", "clock", "weather"]
+end    = ["tray", "clipboard", "cpu", "ram", "notifications", "battery", "control-center"]
+
+[widget.active_window]
+min_length    = 80
+max_length    = 280
+title_scroll  = "on_hover"
+display       = "icon_and_text"
+
+[widget.workspaces]
+style               = "regular"
+show_labels         = true
+label_source        = "id"
+hide_when_empty     = false
+focused_output_only = true
+
+[widget.media]
+artist_first       = true
+hide_when_no_media = true
+
+[widget.weather]
+show_condition   = false
+show_temperature = true
+max_length       = 160
+
+[widget.cpu]
+type          = "sysmon"
+stat          = "cpu_usage"
+visualization = "gauge"
+
+[widget.ram]
+type          = "sysmon"
+stat          = "ram_used"
+visualization = "gauge"
+
+[widget.notifications]
+hide_when_no_unread = true
+
+[notification]
+enable_daemon     = true
+position          = "top_right"
+background_opacity = 0.95
+border            = true
+max_visible       = 3
+
+[audio]
+enable_sounds = true
+sound_volume  = 0.5
+
+# 按旧 swayidle 行为：600 秒锁屏，601 秒关屏。
+[idle]
+pre_action_fade_seconds = 2.0
+behavior_order          = ["lock", "screen-off"]
+
+[idle.behavior.lock]
+timeout = 600
+action  = "lock"
+enabled = true
+
+[idle.behavior.screen-off]
+timeout = 601
+action  = "screen_off"
+enabled = true
+
+[lockscreen]
+enabled             = true
+lock_before_suspend = true
+fingerprint         = false
+blurred_desktop     = false
+
+# 鸟取（Tottori）天气与位置。
+# address 用于显示和地理编码；latitude/longitude 是 Tottori 市的兜底坐标。
+[location]
+auto_locate = false
+address     = "Tottori, Japan"
+latitude    = 35.5011
+longitude   = 134.2377
+
+[weather]
+enabled         = true
+refresh_minutes = 30
+unit            = "metric"
+effects         = true
+
+# 应用主题模板当前未启用，避免和旧 DMS / matugen 配置打架。
+# 先安装 adw-gtk3 / nwg-look / qt6ct-kde，再用 noctalia theme --list-templates 确认 ID。
+# 可考虑：
+# [theme.templates]
+# enable_builtin_templates = true
+# builtin_ids              = ["kitty", "ghostty"]
+
+# ---------------------------------------------------------------------------
+# Session panel（Mod+Shift+Q -> noctalia msg panel-toggle session）
+#
+# Noctalia v5.1.0 没有内置 hibernate 动作。内置 action 只有：
+#   lock / logout / suspend / lock_and_suspend / reboot / shutdown / command
+# 「Settings -> Power -> Session panel」里也没有 hibernate 开关，所以只能用
+# 自定义命令（action = "command"）把它补进菜单。
+#
+# 注意：只要声明了 [[shell.session.actions]]，默认那 5 个动作就不再自动生成，
+# 必须在下面把想要的按钮全部写出来（顺序即按钮顺序）。整段删除则恢复默认。
+#
+# 休眠本身依赖系统：本机 /swap/swapfile + mkinitcpio resume hook 已就绪，
+# logind CanHibernate = yes，所以 systemctl hibernate 直接可用。
+# 由于 [lockscreen] lock_before_suspend = true，休眠前仍会先锁屏。
+# ---------------------------------------------------------------------------
+[shell.session]
+grid           = false   # 改成 true 可用多行网格排布
+grid_columns   = 3
+show_shortcuts = true
+
+[[shell.session.actions]]
+action   = "lock"
+shortcut = "1"
+
+[[shell.session.actions]]
+action   = "logout"
+shortcut = "2"
+
+[[shell.session.actions]]
+action   = "lock_and_suspend"
+shortcut = "3"
+
+# 追加的休眠按钮；若想要「挂起后再休眠」，把 command 换成
+# systemctl suspend-then-hibernate
+[[shell.session.actions]]
+action   = "command"
+label    = "Hibernate"
+glyph    = "hibernate"
+command  = "systemctl hibernate"
+shortcut = "4"
+
+[[shell.session.actions]]
+action   = "reboot"
+shortcut = "5"
+
+[[shell.session.actions]]
+action   = "shutdown"
+variant  = "destructive"
+shortcut = "6"

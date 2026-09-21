@@ -1,0 +1,15 @@
+// Glue profile-specific overrides.
+// These are applied after the common config in config.kdl.
+
+environment {
+    NIRI_PROFILE "glue"
+}
+
+spawn-at-startup "mako"
+spawn-at-startup "swaybg-start"
+spawn-at-startup "waybar"
+spawn-at-startup "swayidle-start"
+
+// Start Vicinae server.
+// Vicinae is a blatant Raycast copycat.
+spawn-sh-at-startup "vicinae server"
