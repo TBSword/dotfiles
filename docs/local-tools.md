@@ -42,3 +42,28 @@
 | `o` | yazi | 按 `[open]` 规则打开：文本→nvim，HTML→xdg-open，文件夹→xdg-open |
 | `O` | yazi | 交互式选择 opener |
 | `Ctrl+O` | yazi | 在当前 session 打开 opencode 窗口 |
+
+## terraria
+
+`~/.local/bin/terraria` — 打开或复用 CS61B 学习工作区。源码在 `~/dotfiles/zsh/.local/bin/terraria`。
+
+### 调用方式
+
+```sh
+terraria
+terraria --dry-run
+terraria --help
+```
+
+### 行为
+
+```
+1. 在 niri 中查找已打开的 CS61B 教材 Firefox 窗口，找到就搬到当前工作区，否则新开
+2. 新开 DeepSeek Web Firefox 窗口
+3. 启动 IDEA
+4. 只复用 terraria 自己标记的 kitty + tmux + yazi 工作区，否则新建
+```
+
+`--dry-run` 只打印会启动或搬运的内容，不产生窗口。
+
+kitty tmux 窗口使用 `terraria-tmux` 作为 app-id/title，避免误复用其他 title 为 `tmux` 的 kitty 窗口。

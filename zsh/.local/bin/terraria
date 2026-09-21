@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+
+import ctypes
+import glob
+import json
+import os
+import shlex
+from pathlib import Path
+import struct
+import subprocess
+import sys
+import time
+
+CS61B_URL = (Path.home() / "Desktop/Ferrous/terraria_ig/pages/Main _ CS 61B Spring 2021_local.html").as_uri()
+DEEPSEEK_URL = "http://127.0.0.1:3080/"
+FIREFOX_CMD = ["firefox-developer-edition"]
+IDEA_CMD = ["/usr/share/idea/bin/idea"]
+KITTY_TMUX_HELPER = str(Path.home() / ".local/bin/tmux-yazi-workspace")
+KITTY_TMUX_CLASS = "terraria-tmux"
+KITTY_TMUX_TITLE = "terraria-tmux"
+KITTY_TMUX_SESSION = "yazi-sp21-s456"
+DRY_RUN = False
+
+try:
+    LZ4 = ctypes.CDLL("/usr/lib/liblz4.so.1")
+    LZ4.LZ4_decompress_safe.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int, ctypes.c_int]
+    LZ4.LZ4_decompress_safe.restype = ctypes.c_int
+except Exception:
+    LZ4 = None
+
+
+def find_niri_socket():
+    env_socket = os.environ.get("NIRI_SOCKET")
+    if env_socket:
+        return env_socket
+    runtime_dir = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}"
+    sockets = sorted(glob.glob(os.path.join(runtime_dir, "niri.wayland-1.*.sock")))
+    for socket in sockets:
+        if os.path.exists(socket):
+            return socket
+    return None
+
+
+def niri_json(args):
+    try:
+        proc = subprocess.run(
+            ["niri", "msg", "-j"] + args,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if proc.returncode != 0:
+            return None
+        return json.loads(proc.stdout)
+    except Exception:
+        return None
+
+
+def niri_action(*args):
+    if DRY_RUN:
+        print(f"[terraria] would run: niri msg action {shlex.join(map(str, args))}", file=sys.stderr)
+        return
+    try:
+        subprocess.run(
+            ["niri", "msg", "action"] + list(args),
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except Exception:
+        pass
+
+
+
+
+def get_windows():
+    return niri_json(["windows"]) or []
+
+
+def get_workspaces():
+    return niri_json(["workspaces"]) or []
+
+
+def get_window_monitor(window):
+    ws_id = window.get("workspace_id")
+    if ws_id is None:
+        return None
+    for ws in get_workspaces():
+        if ws.get("id") == ws_id:
+            return ws.get("output")
+    return None
+
+
+def get_focused_workspace():
+    for ws in get_workspaces():
+        if ws.get("is_focused"):
+            return ws
+    return None
+
+
+def move_window_to_current_workspace(window):
+    """Move an existing window into whichever workspace the user is on now."""
+    focused_ws = get_focused_workspace()
+    if focused_ws is None:
+        return
+    if window.get("workspace_id") == focused_ws.get("id"):
+        return
+
+    win_id = str(window["id"])
+
+    if get_window_monitor(window) != focused_ws.get("output"):
+        niri_action("move-window-to-monitor", "--id", win_id, focused_ws.get("output"))
+        if not DRY_RUN:
+            time.sleep(0.25)
+
+    niri_action(
+        "move-window-to-workspace",
+        "--window-id", win_id,
+        "--focus", "false",
+        str(focused_ws.get("idx")),
+    )
+    if not DRY_RUN:
+        time.sleep(0.15)
+
+
+def launch(cmd):
+    if DRY_RUN:
+        print(f"[terraria] would launch: {shlex.join(map(str, cmd))}", file=sys.stderr)
+        return
+    subprocess.Popen(
+        cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+
+
+def decompress_jsonlz4(path):
+    if LZ4 is None:
+        return None
+    try:
+        with open(path, "rb") as fh:
+            data = fh.read()
+        if data[:8] != b"mozLz40\0":
+            return None
+        uncompressed_size = struct.unpack("<I", data[8:12])[0]
+        src = ctypes.create_string_buffer(data[12:])
+        dst = ctypes.create_string_buffer(uncompressed_size)
+        ret = LZ4.LZ4_decompress_safe(
+            ctypes.addressof(src), ctypes.addressof(dst), len(data) - 12, uncompressed_size
+        )
+        if ret < 0:
+            return None
+        return json.loads(dst.raw[:ret].decode("utf-8"))
+    except Exception:
+        return None
+
+
+def find_cs61b_selected_title_from_sessionstore(url=CS61B_URL):
+    """Return the active-tab title of the Firefox window that has `url` open."""
+    base = os.path.expanduser("~/.mozilla/firefox")
+    candidates = sorted(
+        glob.glob(os.path.join(base, "*dev-edition-default", "sessionstore-backups", "recovery.jsonlz4")),
+        key=os.path.getmtime,
+        reverse=True,
+    )
+    if not candidates:
+        return None
+
+    for path in candidates:
+        obj = decompress_jsonlz4(path)
+        if not obj:
+            continue
+        for win in obj.get("windows", []):
+            tabs = win.get("tabs", [])
+            has_url = False
+            for tab in tabs:
+                for entry in tab.get("entries", []):
+                    if entry.get("url") == url:
+                        has_url = True
+                        break
+                if has_url:
+                    break
+            if not has_url:
+                continue
+
+            selected = win.get("selected", 1)
+            if 1 <= selected <= len(tabs):
+                sel_tab = tabs[selected - 1]
+                entries = sel_tab.get("entries", [])
+                if entries:
+                    idx = max(0, min(sel_tab.get("index", len(entries)) - 1, len(entries) - 1))
+                    return entries[idx].get("title")
+    return None
+
+
+def find_cs61b_window():
+    # 1. Direct title match against the niri window list.
+    for window in get_windows():
+        app_id = window.get("app_id", "")
+        title = window.get("title", "")
+        if "firefox" in app_id and ("CS61B" in title or "CS 61B" in title):
+            return window
+
+    # 2. The tab may be in the background. Use Firefox's session store to find
+    #    the active-tab title of the window that contains CS61B_URL, then match
+    #    that title against the niri window list.
+    selected_title = find_cs61b_selected_title_from_sessionstore()
+    if selected_title:
+        for window in get_windows():
+            app_id = window.get("app_id", "")
+            title = window.get("title", "")
+            # niri appends " — <browser name>" to Firefox window titles.
+            if "firefox" in app_id and (selected_title in title or title == selected_title):
+                return window
+
+    return None
+
+
+def process_cmdline(pid):
+    try:
+        with open(f"/proc/{pid}/cmdline", "rb") as fh:
+            return fh.read().replace(b"\0", b" ").decode(errors="replace")
+    except Exception:
+        return ""
+
+
+def process_children(pid):
+    try:
+        with open(f"/proc/{pid}/task/{pid}/children") as fh:
+            return [int(value) for value in fh.read().split()]
+    except Exception:
+        return []
+
+
+def is_kitty_tmux_session_process(pid):
+    stack = [pid]
+    seen = set()
+    while stack:
+        current = stack.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        cmdline = process_cmdline(current)
+        if "tmux" in cmdline and KITTY_TMUX_SESSION in cmdline:
+            return True
+        stack.extend(process_children(current))
+    return False
+
+
+def find_kitty_tmux_window():
+    fallback = []
+    for window in get_windows():
+        app_id = window.get("app_id", "")
+        title = window.get("title", "")
+        if app_id == KITTY_TMUX_CLASS or title == KITTY_TMUX_TITLE:
+            return window
+        if "kitty" in app_id.lower() and title == "tmux":
+            fallback.append(window)
+
+    for window in fallback:
+        try:
+            pid = int(window.get("pid"))
+        except (TypeError, ValueError):
+            continue
+        if is_kitty_tmux_session_process(pid):
+            return window
+    return None
+
+
+USAGE = """usage: terraria [-n|--dry-run] [-h|--help] [--selected-title-for URL]
+
+No arguments: run the full terraria workspace launcher.
+
+  -n, --dry-run
+      Print what would be launched or moved, without changing the session.
+
+  --selected-title-for URL
+      Only look up, in the Firefox session store, the title of the tab that is
+      active in the window containing URL, and print it.
+"""
+
+
+def parse_args(args):
+    dry_run = False
+    selected_title_url = None
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg in ("-h", "--help"):
+            print(USAGE, end="")
+            raise SystemExit(0)
+        if arg in ("-n", "--dry-run"):
+            dry_run = True
+        elif arg == "--selected-title-for":
+            selected_title_url = args[i + 1] if i + 1 < len(args) else CS61B_URL
+            i += 1
+        else:
+            print(USAGE, file=sys.stderr, end="")
+            raise SystemExit(2)
+        i += 1
+    return dry_run, selected_title_url
+
+
+def main():
+    global DRY_RUN
+    dry_run, selected_title_url = parse_args(sys.argv[1:])
+    DRY_RUN = dry_run
+
+    if selected_title_url is not None:
+        title = find_cs61b_selected_title_from_sessionstore(selected_title_url)
+        if title:
+            print(title)
+        return 0
+
+    socket = find_niri_socket()
+    if not socket:
+        print("niri socket not found", file=sys.stderr)
+        return 1
+    os.environ["NIRI_SOCKET"] = socket
+
+    if DRY_RUN:
+        print("[terraria] dry-run: no windows will be launched or moved", file=sys.stderr)
+
+    # 1. Firefox: CS61B textbook window.
+    #    If that file is already open in a Firefox window, move that window to
+    #    the current workspace. Otherwise open a fresh window. We never focus
+    #    a workspace here; new windows land wherever the user currently is.
+    existing = find_cs61b_window()
+    if existing is not None:
+        move_window_to_current_workspace(existing)
+    else:
+        launch(FIREFOX_CMD + ["--new-window", CS61B_URL])
+
+    # 2. Firefox: DeepSeek window (always a fresh window).
+    launch(FIREFOX_CMD + ["--new-window", DEEPSEEK_URL])
+
+    # 3. IntelliJ IDEA: just start a new one, leave any existing process alone.
+    launch(IDEA_CMD)
+
+    # 4. Kitty/tmux: reuse an existing kitty-tmux window if present, else start the helper.
+    existing_kitty = find_kitty_tmux_window()
+    if existing_kitty is not None:
+        move_window_to_current_workspace(existing_kitty)
+    else:
+        launch(["kitty", "-e", KITTY_TMUX_HELPER])
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

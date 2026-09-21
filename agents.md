@@ -4,8 +4,8 @@
 
 - 路径：`~/dotfiles`
 - 用途：个人 dotfiles，用 Git 管理 `~/.config` 与 `~/.local/bin` 中的配置文件
-- 分支：`main`
-- 记录时 HEAD：`07d611b add agents.md`
+- 分支：`noctalia`
+- 记录时 HEAD：`41071cf add hibernate to noctalia session panel`
   - 更新约定：每次修改本文件后，把这一行更新为当时的 `git rev-parse --short HEAD` 和最新提交标题
 
 ## 目录结构
@@ -27,7 +27,7 @@
 | `tmux/` | tmux 配置与脚本（`tmux-edit`、`tmux-opencode`、`tmux-yazi`） |
 | `waybar/` | waybar 配置与脚本 |
 | `yazi/` | yazi 文件管理器配置与插件 |
-| `zsh/` | zsh 配置（`.zshrc`） |
+| `zsh/` | zsh 配置与命令（`.zshrc`、`terraria`） |
 
 ## 关键约定与工具
 
@@ -36,6 +36,7 @@
   - `tmux-edit`：yazi → 按文件目录复用/创建 tmux 中的 nvim 窗口
   - `tmux-opencode`：yazi 中 Ctrl+O 打开 opencode 窗口
   - `tmux-yazi`：niri Mod+Y 创建独立 yazi tmux session
+  - `terraria`：打开或复用 CS61B 学习工作区的 Firefox、IDEA、kitty-tmux 窗口
 - waybar 使用 `~/.local/bin/niri-ws`、`niri-sys`、`niri-temp` 自定义脚本
 - 路径规范：任何配置/脚本都不得硬编码 `/home/explosivitea/...` 这类绝对用户路径
   - shell/zsh：用 `$HOME` 或 `~`

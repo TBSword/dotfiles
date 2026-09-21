@@ -225,7 +225,7 @@ Noctalia 启动包装脚本：
 | Noctalia 运行时状态 | `~/.local/state/noctalia/state.toml` |
 | Noctalia 日志 | `~/.cache/noctalia/noctalia.log` |
 | Waybar | `~/dotfiles/waybar/.config/waybar` |
-| Vicinae | `~/dotfiles/vicinae-config`、`~/dotfiles/vicinae-scripts` |
+| terraria | `~/dotfiles/zsh/.local/bin/terraria`，部署到 `~/.local/bin/terraria` |
 | fuzzel | `~/dotfiles/fuzzel/.config/fuzzel` |
 | matugen | `~/dotfiles/matugen/.config/matugen` |
 | DankMaterialShell 旧配置 | `~/.config/DankMaterialShell/settings.json` |

@@ -24,4 +24,4 @@ else
   tmux new-window -t "$SESSION" -n zsh -c "$REPO" zsh
 fi
 
-exec kitty -e tmux attach-session -t "$SESSION"
+exec kitty --class "terraria-tmux" --title "terraria-tmux" -e tmux attach-session -t "$SESSION"
