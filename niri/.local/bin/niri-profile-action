@@ -1,0 +1,81 @@
+#!/bin/sh
+set -eu
+
+action=${1:-}
+if [ -z "$action" ]; then
+    echo "usage: niri-profile-action <action>" >&2
+    exit 2
+fi
+
+# Prefer the variable set by the active niri profile; fall back to reading
+# profile.kdl when the script is run manually.
+profile=${NIRI_PROFILE:-}
+if [ -z "$profile" ]; then
+    config_dir=${XDG_CONFIG_HOME:-$HOME/.config}/niri
+    profile_file=$config_dir/profile.kdl
+    if [ -r "$profile_file" ]; then
+        profile=$(sed -n 's#.*include[[:space:]]*"profiles/\([^"]*\)\.kdl".*#\1#p' "$profile_file" | head -n 1)
+    fi
+fi
+profile=${profile:-noctalia}
+
+case "$profile:$action" in
+    glue:wallpaper)
+        if command -v wallpaper-select >/dev/null 2>&1; then
+            exec wallpaper-select
+        else
+            exec "$HOME/.local/bin/wallpaper-select"
+        fi
+        ;;
+    glue:launcher) exec vicinae toggle ;;
+    glue:lock)
+        if command -v lock-screen >/dev/null 2>&1; then
+            exec lock-screen
+        else
+            exec "$HOME/.local/bin/lock-screen"
+        fi
+        ;;
+
+    glue:volume-up) exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0 ;;
+    glue:volume-down) exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1- ;;
+    glue:volume-mute) exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;
+    glue:mic-mute) exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle ;;
+
+    glue:media-toggle) exec playerctl play-pause ;;
+    glue:media-stop) exec playerctl stop ;;
+    glue:media-prev) exec playerctl previous ;;
+    glue:media-next) exec playerctl next ;;
+
+    glue:brightness-up) exec brightnessctl --class=backlight set +10% ;;
+    glue:brightness-down) exec brightnessctl --class=backlight set 10%- ;;
+
+    glue:screenshot) exec niri msg action screenshot ;;
+    glue:screenshot-screen) exec niri msg action screenshot-screen ;;
+    glue:screenshot-window) exec niri msg action screenshot-window ;;
+
+    noctalia:wallpaper) exec noctalia msg panel-toggle wallpaper ;;
+    noctalia:launcher) exec noctalia msg panel-toggle launcher ;;
+    noctalia:lock) exec noctalia msg session lock ;;
+
+    noctalia:volume-up) exec noctalia msg volume-up 10 ;;
+    noctalia:volume-down) exec noctalia msg volume-down 10 ;;
+    noctalia:volume-mute) exec noctalia msg volume-mute ;;
+    noctalia:mic-mute) exec noctalia msg mic-mute ;;
+
+    noctalia:media-toggle) exec noctalia msg media toggle ;;
+    noctalia:media-stop) exec noctalia msg media stop ;;
+    noctalia:media-prev) exec noctalia msg media previous ;;
+    noctalia:media-next) exec noctalia msg media next ;;
+
+    noctalia:brightness-up) exec noctalia msg brightness-up current 10 ;;
+    noctalia:brightness-down) exec noctalia msg brightness-down current 10 ;;
+
+    noctalia:screenshot) exec noctalia msg screenshot-region ;;
+    noctalia:screenshot-screen) exec noctalia msg screenshot-fullscreen ;;
+    noctalia:screenshot-window) exec noctalia msg screenshot-annotate ;;
+
+    *)
+        echo "niri-profile-action: unknown profile/action: $profile:$action" >&2
+        exit 2
+        ;;
+esac
