@@ -32,6 +32,7 @@
 |---|---|---|
 | `Mod+Y` | niri | 打开 kitty + tmux + yazi |
 | `Mod+Z` | niri | 新窗口打开 opencode web（需先 enable systemd 服务） |
+| `Mod+Shift+D` | niri | 旋转当前聚焦的显示器（normal/90/180/270 循环） |
 | `Ctrl+O` | zsh | 在当前目录打开 opencode |
 | `Ctrl+G` | zsh | 打开 lazygit |
 | `Ctrl+Y` | zsh | 打开 yazi |
@@ -45,7 +46,7 @@
 
 ## terraria
 
-`~/.local/bin/terraria` — 打开或复用 CS61B 学习工作区。源码在 `~/dotfiles/zsh/.local/bin/terraria`。
+`~/.local/bin/terraria` — 打开或复用 CS61B 学习工作区。源码在 `~/dotfiles/zsh/.local/bin/terraria`，launcher 条目在 `~/dotfiles/applications/.local/share/applications/terraria.desktop`。
 
 ### 调用方式
 
@@ -54,6 +55,8 @@ terraria
 terraria --dry-run
 terraria --help
 ```
+
+也可在 Mod+D 的应用列表里搜索 `Terraria` 启动。条目由 stow 包 `applications` 部署到 `~/.local/share/applications/terraria.desktop`，`Exec=terraria`，因此依赖会话 PATH 中包含 `~/.local/bin`。
 
 ### 行为
 
@@ -67,3 +70,6 @@ terraria --help
 `--dry-run` 只打印会启动或搬运的内容，不产生窗口。
 
 kitty tmux 窗口使用 `terraria-tmux` 作为 app-id/title，避免误复用其他 title 为 `tmux` 的 kitty 窗口。
+
+terraria 的 tmux 使用独立 socket `terraria`，不会和默认 tmux server 中的 session 互相切换。
+需要手动进入时使用 `tmux -L terraria attach -t yazi-sp21-s456`。

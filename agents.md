@@ -5,13 +5,15 @@
 - 路径：`~/dotfiles`
 - 用途：个人 dotfiles，用 Git 管理 `~/.config` 与 `~/.local/bin` 中的配置文件
 - 分支：`noctalia`
-- 记录时 HEAD：`41071cf add hibernate to noctalia session panel`
+- 记录时 HEAD：`903ea42 make terraria a shell script, thus vicinae-independent`
   - 更新约定：每次修改本文件后，把这一行更新为当时的 `git rev-parse --short HEAD` 和最新提交标题
 
 ## 目录结构
 
 | 目录 | 内容 |
 |---|---|
+| `applications/` | XDG 桌面条目，目前为 `terraria.desktop` |
+| `deskpet/` | Wayland 桌宠原型：C + layer-shell 实现、Quickshell QML 版、说明文档 |
 | `docs/` | `local-tools.md`（本地工具说明）、`opencode-instructions.md`（交流偏好） |
 | `hypr/` | Hyprland 配置 |
 | `kitty/` | kitty 终端配置与主题 |
@@ -36,8 +38,9 @@
   - `tmux-edit`：yazi → 按文件目录复用/创建 tmux 中的 nvim 窗口
   - `tmux-opencode`：yazi 中 Ctrl+O 打开 opencode 窗口
   - `tmux-yazi`：niri Mod+Y 创建独立 yazi tmux session
-  - `terraria`：打开或复用 CS61B 学习工作区的 Firefox、IDEA、kitty-tmux 窗口
+  - `terraria`：打开或复用 CS61B 学习工作区的 Firefox、IDEA、kitty-tmux 窗口；Mod+D 里显示为 Terraria
 - waybar 使用 `~/.local/bin/niri-ws`、`niri-sys`、`niri-temp` 自定义脚本
+- desktop entry 放在 `applications/` 包，部署用 `stow applications`，之后运行 `update-desktop-database ~/.local/share/applications`
 - 路径规范：任何配置/脚本都不得硬编码 `/home/explosivitea/...` 这类绝对用户路径
   - shell/zsh：用 `$HOME` 或 `~`
   - Python：用 `Path.home()` 或 `os.path.expanduser("~")`

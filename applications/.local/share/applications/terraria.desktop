@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Terraria
+GenericName=Try it!
+Comment=Open or reuse the CS61B study workspace (Firefox, IDEA, kitty/tmux)
+Exec=terraria
+Icon=applications-education
+Terminal=false
+Categories=Education;
+Keywords=terraria;cs61b;cs 61b;study;workspace;idea;
+StartupNotify=false

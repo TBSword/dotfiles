@@ -343,7 +343,7 @@ def main():
     if existing_kitty is not None:
         move_window_to_current_workspace(existing_kitty)
     else:
-        launch(["kitty", "-e", KITTY_TMUX_HELPER])
+        launch([KITTY_TMUX_HELPER])
 
     return 0
 
