@@ -1,12 +1,19 @@
 [Unit]
 Description=DeepSeek Harness Web UI
+# Keep retrying through a slow/flaky early-boot network instead of hitting
+# "start-limit-hit" and giving up for good.
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
 WorkingDirectory=%h/Desktop/B1/reposet/deepseek-harness
-Environment=PATH=%h/.nvm/versions/node/v22.22.0/bin:/usr/local/bin:/usr/bin:/usr/local/sbin
-ExecStart=%h/.nvm/versions/node/v22.22.0/bin/npx --yes --prefix %h @deepseek-ai/dsh web --no-open
+# dsh >= 0.2.2 requires Node >= 24.9.0; bump this with the nvm default.
+Environment=PATH=%h/.nvm/versions/node/v26.13.0/bin:/usr/local/bin:/usr/bin:/usr/local/sbin
+# Resolve the dist-tag explicitly: a bare spec resolves as "*", and dsh only
+# publishes prereleases, so "*" matches nothing (npm 10 "notarget"/ETARGET).
+ExecStart=%h/.nvm/versions/node/v26.13.0/bin/npx --yes --prefix %h @deepseek-ai/dsh@latest web --no-open
 Restart=on-failure
+RestartSec=15
 
 [Install]
 WantedBy=default.target

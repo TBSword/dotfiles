@@ -34,4 +34,4 @@ if [[ "$state" == "active" || "$state" == "activating" ]]; then
     done
 fi
 
-exec firefox-developer-edition --new-window "$URL"
+exec firefox --new-window "$URL"
