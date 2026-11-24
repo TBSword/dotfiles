@@ -52,7 +52,7 @@ browser = [
 	{ run = 'firefox-developer-edition --new-window %s1', desc = "Browser new window", for = "unix" },
 ]
 exec = [
-	{ run = 'kitty -- sh -c "cd %d1 && ./%f1; echo; echo Press Enter to exit...; read _"', desc = "Execute script", for = "unix", block = true },
+	{ run = 'kitty -- sh -c "cd %d1 && sh %f1; echo; echo Press Enter to exit...; read _"', desc = "Execute script", for = "unix", block = true },
 ]
 reveal = [
 	{ run = "xdg-open %d1",         desc = "Reveal", for = "linux" },
@@ -73,7 +73,12 @@ rules = [
 	# Folder
 	{ url = "*/", use = [ "open", "reveal" ] },
 	# Text
-	{ mime = "text/html", use = [ "open", "reveal" ] },
+	{ mime = "text/html", use = [ "browser", "reveal" ] },
+	# Shell scripts → run in kitty
+	{ url = "*.sh",   use = [ "exec", "reveal" ] },
+	{ url = "*.bash", use = [ "exec", "reveal" ] },
+	{ url = "*.zsh",  use = [ "exec", "reveal" ] },
+	{ mime = "{text/x-shellscript,application/x-shellscript,application/x-sh,text/x-sh}", use = [ "exec", "reveal" ] },
 	{ mime = "text/*", use = [ "edit", "reveal" ] },
 	# Image
 	{ mime = "image/*", use = [ "open", "reveal" ] },

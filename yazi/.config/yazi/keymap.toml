@@ -80,6 +80,7 @@ keymap = [
 	{ on = "<C-o>",     run = "shell --confirm tmux-opencode", desc = "Open Opencode" },
 	{ on = ";",         run = "shell --interactive",         desc = "Run a shell command" },
 	{ on = ":",         run = "shell --block --interactive", desc = "Run a shell command (block until finishes)" },
+	{ on = "C",         run = "plugin ouch",                 desc = "Compress to an archive (name sets the format, zip by default)" },
 	{ on = ".",         run = "hidden toggle",               desc = "Toggle the visibility of hidden files" },
 	{ on = "s",         run = "search --via=fd",             desc = "Search files by name via fd" },
 	{ on = "S",         run = "search --via=rg",             desc = "Search files by content via ripgrep" },
@@ -580,11 +581,6 @@ desc = "Paste into the hovered directory or CWD"
 # easyjump.yazi
 [[mgr.prepend_keymap]]
 on   = [ "i" ]
-run  = "plugin easyjump open"
-desc = "Open file by label"
-
-[[mgr.prepend_keymap]]
-on   = [ "I" ]
 run  = "plugin easyjump"
 desc = "Jump to file by label"
 
