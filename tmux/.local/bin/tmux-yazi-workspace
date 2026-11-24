@@ -7,21 +7,24 @@ set -u
 
 REPO="$HOME/Desktop/Ferrous/terraria_ig/repo/sp21-s456"
 SESSION="yazi-sp21-s456"
+TMUX_CMD=(tmux -L "terraria")
+
+unset TMUX
 
 export PATH="$HOME/.local/bin:$PATH"
 
-if tmux has-session -t "$SESSION" 2>/dev/null; then
+if "${TMUX_CMD[@]}" has-session -t "$SESSION" 2>/dev/null; then
   # Session already exists: make sure both windows are present.
-  if ! tmux list-windows -t "$SESSION" -F '#{window_name}' 2>/dev/null | grep -qx 'yazi'; then
-    tmux new-window -t "$SESSION" -n yazi -c "$REPO" yazi
+  if ! "${TMUX_CMD[@]}" list-windows -t "$SESSION" -F '#{window_name}' 2>/dev/null | grep -qx 'yazi'; then
+    "${TMUX_CMD[@]}" new-window -t "$SESSION" -n yazi -c "$REPO" yazi
   fi
-  if ! tmux list-windows -t "$SESSION" -F '#{window_name}' 2>/dev/null | grep -qx 'zsh'; then
-    tmux new-window -t "$SESSION" -n zsh -c "$REPO" zsh
+  if ! "${TMUX_CMD[@]}" list-windows -t "$SESSION" -F '#{window_name}' 2>/dev/null | grep -qx 'zsh'; then
+    "${TMUX_CMD[@]}" new-window -t "$SESSION" -n zsh -c "$REPO" zsh
   fi
 else
   # Create the session detached with both windows, then attach in kitty.
-  tmux new-session -d -s "$SESSION" -n yazi -c "$REPO" yazi
-  tmux new-window -t "$SESSION" -n zsh -c "$REPO" zsh
+  "${TMUX_CMD[@]}" new-session -d -s "$SESSION" -n yazi -c "$REPO" yazi
+  "${TMUX_CMD[@]}" new-window -t "$SESSION" -n zsh -c "$REPO" zsh
 fi
 
-exec kitty --class "terraria-tmux" --title "terraria-tmux" -e tmux attach-session -t "$SESSION"
+exec kitty --class "terraria-tmux" --title "terraria-tmux" -e "${TMUX_CMD[@]}" attach-session -t "$SESSION"
