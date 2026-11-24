@@ -89,9 +89,9 @@ echo "       [Z] [X] [C] [V] [B]   [K] [M] [,] [.] [/]          "
 export REPO_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/sp21-s456"
 export SNAPS_DIR="$HOME/Desktop/Ferrous/terraria_ig/repo/snaps-sp21-s456"
 
-# xl: 执行后续命令，并将该命令以可复用形式追加到 yeah.sh（按天追加 #YYYYMMDD 注释）
+# xl: 执行后续命令，并将该命令以可复用形式追加到 yeah.sh.old（按天追加 #YYYYMMDD 注释）
 xl() {
-  local logfile="$HOME/Documents/Xtea_log/yeah.sh"
+  local logfile="$HOME/Documents/Xtea_log/yeah.sh.old"
   local dir=${logfile%/*}
   local today last_date cmd
   if [ "$#" -eq 0 ]; then
