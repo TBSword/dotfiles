@@ -8,7 +8,6 @@ if (( $+commands[bat] )); then
   export BAT_THEME="${BAT_THEME:-ansi}"
   export BAT_STYLE='numbers,changes,header'
   export BAT_PAGER='less -FRX'
-  (( $+commands[col] )) && export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
 (( $+commands[delta] )) && export GIT_PAGER='delta'
 
