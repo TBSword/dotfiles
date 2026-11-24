@@ -1,0 +1,154 @@
+# /etc/dae/config.dae
+#
+# 基于 dae v2.1.1 官方 example.dae 改写，适配本机：
+#   - 单机笔记本，不向局域网提供代理；WAN = wlp0s20f3（Wi-Fi，默认路由），插网线时是 enp8s0
+#   - NetworkManager 管网络；装了 Docker（docker0）
+#   - 校园网：DHCP 10.26.x.x/16，网关 10.26.0.1，学校 DNS 202.204.52.94 / .89
+#
+# 安装：sudo install -Dm640 ~/dotfiles/dae/config.dae /etc/dae/config.dae
+# 启动：sudo systemctl enable --now dae
+# 改完热重载：sudo dae reload   （或 sudo systemctl reload dae）
+# 查状态/日志：systemctl status dae -l ; journalctl -u dae -f
+#
+# 注意：dae 和 daed 会抢同一个 dae0 网卡和 eBPF 钩子，别同时跑。
+#      sudo systemctl disable --now daed
+
+global {
+    tproxy_port: 12345
+    tproxy_port_protect: true
+    log_level: info
+
+    # 绑定 WAN。auto = 跟着默认路由走，Wi-Fi/有线切换不用改配置。
+    wan_interface: auto
+
+    # 只代理本机上网。想让宿舍其它设备也走代理时，才需要打开下面这行。
+    #lan_interface: auto
+
+    auto_config_kernel_parameter: true
+    # 开机等网络就绪再拉订阅，避免订阅因网络未就绪而拉取失败。
+    disable_waiting_network: false
+
+    # ---- 节点可用性检测 ----
+    tcp_check_url: 'http://cp.cloudflare.com,1.1.1.1'
+    tcp_check_http_method: HEAD
+    udp_check_dns: 'dns.google:53,8.8.8.8'
+    check_interval: 30s
+    # 新节点延迟比现用节点好 50ms 以上才切换，避免来回抖动。
+    check_tolerance: 50ms
+
+    # ---- 连接方式 ----
+    # domain: 用嗅探出的域名去代理端重新解析，抗 DNS 污染，一般也更快。
+    dial_mode: domain
+    sniffing_timeout: 30ms
+    auto_sniff_punt: true
+    allow_insecure: false
+
+    # 有 Hysteria2 / TUIC 节点时，这两个值会作为带宽提示交给协议做拥塞控制。
+    # 按你实际带宽改，不确定就别开。
+    #bandwidth_max_tx: '50 mbps'
+    #bandwidth_max_rx: '500 mbps'
+
+    # 拉订阅、解析 DoH 域名时用的引导 DNS（默认 119.29.29.29 / 223.5.5.5）。
+    #bootstrap_resolver: '223.5.5.5:53'
+}
+
+subscription {
+    # 同一个机场的两份订阅，内容不重复，都留着当冗余：
+    #   cobo1 = 域名入口（60 条全部指向 *.uu0009.com，纯 trojan）
+    #   cobo2 = IP 入口（209.248.32.118 等，60 条 = 56 trojan + 4 ssr）
+    # 一份入口被墙时另一份还能顶，所以别删。
+    #
+    # 用 https-file:// 而不是 https://：拉取成功会缓存到 /etc/dae/persist.d/<tag>.sub，
+    # 之后拉取失败（机场挂掉 / 换域名 / 被墙）时用缓存兜底，不会变成 0 节点。
+    cobo1: 'https-file://xb1821.com/rss/trojanqt/plLR4to/GO-ov_'
+    cobo2: 'https-file://xb1821.com/rss/plLR4to/GO-ov_'
+    # dgg:   'https://PASTE_DGG_SUBSCRIPTION_URL'
+
+    # dae 没有定时刷新订阅的机制，只在启动和 `dae reload` 时拉一次。
+    # 手动更新：sudo dae reload    看结果：journalctl -u dae | grep resolved
+}
+
+dns {
+    upstream {
+        alidns:    'udp://223.5.5.5:53'      # 国内域名：阿里 DNS，直连解析
+        googledns: 'tcp+udp://8.8.8.8:53'    # 国外域名：查询本身走代理，所以用 8.8.8.8 没问题
+        #campus:   'udp://202.204.52.94:53'  # 学校 DNS，需要解析校园内部域名时再打开
+
+        # 代价：这个上游的存活绑在节点上 —— 节点全挂时国外域名直接 SERVFAIL
+        # （日志里每天几百到上千条 "DNS forward to upstream failed ... target=8.8.8.8:53"）。
+        # 试过改成国内可达的 DoH 让解析不依赖代理：
+        #   googledns: 'https://dns.alidns.com:443/dns-query'
+        # 但实测阿里 DoH 对部分域名给的是错答案（www.google.com 返回 104.244.42.197，
+        # 那是 Twitter 的段）。dial_mode: domain 下多数连接不受影响，可一旦嗅探超时
+        # 回落到按 IP 拨号就会被带偏，所以先保持 8.8.8.8。真要换，先拿几个域名验证答案。
+    }
+    routing {
+        request {
+            # 校园内部域名用学校 DNS（suffix 语法和 routing 里的 domain(suffix:) 一样）
+            #qname(suffix: 'ustb.edu.cn') -> campus
+            qname(geosite:cn) -> alidns
+            fallback: googledns
+        }
+
+        # 可选：发现解析结果被污染时打开（国外域名拿到私有 IP 就重新解析）
+        #response {
+        #    upstream(googledns) -> accept
+        #    ip(geoip:private) && !qname(geosite:cn) -> googledns
+        #    fallback: accept
+        #}
+    }
+}
+
+group {
+    # 主力组：cobo1 + cobo2 两个订阅的全部节点（约 120 个 dialer），
+    # 按最近延迟的滑动平均选最快的。
+    #
+    # 别按名字过滤掉"爆满"这类节点：平时只有 ~35/120 个节点存活，
+    # 那些标着"爆满"的往往就是仅剩能用的，滤掉只会让池子更空。
+    proxy {
+        # 优先日本节点：日本节点的延迟按 -500ms 计，等效于"只要日本节点还活着就选日本"。
+        # 偏移只影响选路，不影响真实连接；日本节点全挂或慢到离谱时，
+        # 其它节点（台湾/香港/美国…）的真实延迟自然会赢，自动回退，不会断网。
+        # 调偏好强弱就改这个值：-200ms 温和，-500ms 基本锁日本，-2000ms 近乎强制。
+        filter: subtag(cobo1, cobo2) && name(keyword: '日本JP') [add_latency: -500ms]
+        # 其余节点照常进池，作为回退。
+        # 但先排掉订阅里混进来的 4 条"信息行"——它们会被当成真节点，
+        # 延迟检测还经常报 0ms，然后被选成出口（日志里 "剩余: 363天…" /
+        # "----------------------------" 抢到过 udp4/udp6），造成 DNS 和网页全挂。
+        filter: subtag(cobo1, cobo2) && !name(keyword: '日本JP') && !name(keyword: '剩余') && !name(keyword: '---') && !name(keyword: '实时负载') && !name(keyword: '官网')
+        policy: min_moving_avg
+    }
+
+    # 可选：单独挑一组打游戏用，关键字按你节点名字里的实际写法改。
+    #game {
+    #    filter: subtag(cobo1, cobo2) && name(keyword: '游戏')
+    #    policy: min_avg10
+    #}
+}
+
+routing {
+    # ---- 官方预置规则，建议保留 ----
+
+    # NetworkManager 自己的连通性检测不能走代理，否则会误判成"无网络"。
+    pname(NetworkManager) -> direct
+    # 广播 / 组播
+    dip(224.0.0.0/3, 'ff00::/8') -> direct
+    # 私有网段直连：校园网 10.26.x、docker0、家里路由器、NAS 都在这里
+    dip(geoip:private) -> direct
+
+    # ---- 下面按需调整 ----
+
+    # 禁掉 QUIC / HTTP3。QUIC 走代理比较费 CPU 也容易出怪问题；
+    # 想用 QUIC（比如某些只用 h3 的服务）就删掉这一行。
+    l4proto(udp) && dport(443) -> block
+
+    # 广告域名拦截，想要就取消注释
+    #domain(geosite:category-ads-all) -> block
+
+    # 国内直连
+    dip(geoip:cn) -> direct
+    domain(geosite:cn) -> direct
+
+    # 其余全部走代理
+    fallback: proxy
+}
