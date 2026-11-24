@@ -1,0 +1,34 @@
+let mapleader = " "
+
+set clipboard=unnamedplus
+set ideawrite=file
+set number
+set relativenumber
+set cursorline
+set incsearch
+
+set surround
+set easymotion
+
+nmap <C-s> :w<CR>
+imap <C-s> <C-o>:w<CR>
+vmap <C-s> <Esc>:w<CR>
+
+nmap <leader>h <Plug>(easymotion-bd-w)
+nmap <leader>f <Action>(Switcher)
+nmap <leader><C-f> <Action>(GotoFile)
+nmap <leader><C-s> <Action>(FindInPath)
+nmap <leader>r <Action>(RecentFiles)
+nmap <leader>uf <Action>(ActivateProjectToolWindow)
+nmap <leader>- <Action>(SelectInProjectView)
+nmap <leader>cw <Action>(ActivateProjectToolWindow)
+
+nmap <leader>j :bprevious<CR>
+nmap <leader>k :bnext<CR>
+nmap <leader>bd :bd<CR>
+nmap <leader>bo :tabonly<CR>
+nmap <leader>p <Action>(Switcher)
+
+nmap gr <Action>(ShowUsages)
+nmap <F2> <Action>(RenameElement)
+nmap <leader>ca <Action>(ShowIntentionActions)
