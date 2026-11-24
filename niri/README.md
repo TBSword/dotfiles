@@ -19,6 +19,7 @@
     └── bin/
         ├── lock-screen                # swaylock 锁屏脚本
         ├── niri-shell-switch          # glue/noctalia profile 切换
+        ├── niri-screen-rotate         # 旋转输出：normal/90/180/270 循环
         ├── noctalia-start             # Noctalia 启动包装脚本，负责 mako 清理
         ├── niri-sys                   # Waybar CPU / 内存模块
         ├── niri-temp                  # Waybar 温度模块
@@ -142,6 +143,7 @@ Super+Alt+L  -> noctalia msg session lock
 Print        -> noctalia msg screenshot-region
 Ctrl+Print   -> noctalia msg screenshot-fullscreen
 Alt+Print    -> noctalia msg screenshot-annotate
+Mod+Shift+A  -> 同 Print（区域截图），供没有 Print 键的键盘使用；该组合未被 niri / Noctalia 占用
 音量/亮度/媒体 -> noctalia msg ...
 ```
 
@@ -199,6 +201,25 @@ Noctalia 启动包装脚本：
 - `wallpaper-set`：直接把指定图片交给 `swaybg-start`
 
 仅 `glue` profile 使用。
+
+### `niri-screen-rotate`
+
+旋转输出，循环 `normal -> 90 -> 180 -> 270 -> normal`：
+
+```sh
+niri-screen-rotate              # 旋转当前聚焦的输出
+niri-screen-rotate next eDP-1   # 只旋转内置屏
+niri-screen-rotate normal DP-4  # 外接屏恢复 normal
+```
+
+- 绑定：`Mod+Shift+D`，定义在两个 profile 共用的 `config.kdl`，hotkey overlay 里显示为
+  "Rotate Screen"。
+- 通过 `niri msg focused-output` / `niri msg outputs` 解析当前 `Transform`，再调用
+  `niri msg output <name> transform <t>`；没有聚焦输出时回退到第一个输出。
+- 当前是镜像（`flipped*`）时，按一次先回到 `normal`。
+- 改动是临时的，和 `niri msg output` 一样：重载配置或重启 niri 后失效。要永久生效，把
+  `transform` 写进 `config.kdl` 里对应 `output` 块，例如内屏
+  `output "eDP-1" { transform "90" }`。
 
 ### `swayidle-start` / `lock-screen`
 

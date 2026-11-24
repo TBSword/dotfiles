@@ -36,6 +36,9 @@ input {
 
         // Enable numlock on startup, omitting this setting disables it.
         numlock
+
+        repeat-delay 200
+        repeat-rate 40
     }
 
     // Next sections include libinput settings.
@@ -419,6 +422,7 @@ binds {
     Mod+Shift+W hotkey-overlay-title="Select Wallpaper" { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-profile-action\" wallpaper"; }
     Mod+D repeat=false hotkey-overlay-title="Run an Application" { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-profile-action\" launcher"; }
     Mod+G hotkey-overlay-title="Open Goldendict" { spawn "goldendict"; }
+    Mod+Shift+G hotkey-overlay-title="Open Gemini" { spawn "chromium" "https://gemini.google.com/app"; }
     Mod+N hotkey-overlay-title="Open Network Manager: nmtui" { spawn "kitty" "--class" "nmtui" "nmtui"; }
     Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen" { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-profile-action\" lock"; }
 
@@ -491,6 +495,12 @@ binds {
     Mod+Shift+I     { focus-monitor-down; }
     Mod+Shift+O     { focus-monitor-up; }
     Mod+Shift+U     { focus-monitor-right; }
+
+    // Rotate the focused output: normal -> 90 -> 180 -> 270 -> normal.
+    // Temporary, like `niri msg output <name> transform`; to make a rotation stick, set
+    // `transform` in that output's block above and reload the config.
+    // `niri-screen-rotate next eDP-1` rotates a specific output instead.
+    Mod+Shift+D hotkey-overlay-title="Rotate Screen" { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-screen-rotate\""; }
 
     Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
     Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
@@ -657,6 +667,8 @@ binds {
     Print { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-profile-action\" screenshot"; }
     Ctrl+Print { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-profile-action\" screenshot-screen"; }
     Alt+Print { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-profile-action\" screenshot-window"; }
+    // Print-free alternative; Mod+Shift+A is unused by niri and Noctalia.
+    Mod+Shift+A repeat=false hotkey-overlay-title="Screenshot Region" { spawn-sh "exec \"$HOME/dotfiles/niri/.local/bin/niri-profile-action\" screenshot"; }
 
 
     // Applications such as remote-desktop clients and software KVM switches may

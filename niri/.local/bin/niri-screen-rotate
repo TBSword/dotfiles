@@ -1,0 +1,118 @@
+#!/bin/sh
+# Rotate a niri output: normal -> 90 -> 180 -> 270 -> normal.
+#
+# Usage:
+#   niri-screen-rotate [transform|next] [output]
+#
+#   transform   next (default) to cycle from the current transform, or one of
+#               normal, 90, 180, 270, flipped, flipped-90, flipped-180, flipped-270.
+#               A mirrored transform is treated as "go back to normal".
+#   output      niri output name, e.g. eDP-1 or DP-4 (default: the focused output).
+#
+# Examples:
+#   niri-screen-rotate              # rotate the focused output another 90° counter-clockwise
+#   niri-screen-rotate next eDP-1   # same, but always the built-in panel
+#   niri-screen-rotate normal DP-4  # put the external monitor back to normal
+#
+# Like `niri msg output <name> transform <t>`, the change is temporary: niri forgets it
+# when the config file changes or niri restarts. To make a rotation permanent, set
+# `transform` in that output's block in ~/.config/niri/config.kdl and reload.
+
+set -eu
+
+usage() {
+    cat >&2 <<'EOF'
+usage: niri-screen-rotate [transform|next] [output]
+
+  transform  next (default) | normal | 90 | 180 | 270
+             | flipped | flipped-90 | flipped-180 | flipped-270
+  output     niri output name, e.g. eDP-1 or DP-4 (default: focused output)
+EOF
+}
+
+next=${1:-next}
+output=${2:-}
+
+case "$next" in
+    -h|--help|help) usage; exit 0 ;;
+esac
+
+[ "$#" -le 2 ] || { usage; exit 2; }
+
+case "$next" in
+    next | normal | 90 | 180 | 270 | flipped | flipped-90 | flipped-180 | flipped-270) ;;
+    *)
+        echo "niri-screen-rotate: invalid transform: $next" >&2
+        usage
+        exit 2
+        ;;
+esac
+
+# `niri msg` prints one block per output:
+#
+#   Output "<make> <model> <serial>" (<name>)
+#     ...
+#     Transform: 90° counter-clockwise
+#
+# so the output name is the trailing parenthesized part. Pass an empty $1 to take the
+# first block (the focused-output query prints exactly one). Print "<name> <transform>",
+# split on the first space: output names never contain spaces.
+current_state() {
+    awk -v want="$1" '
+        /^Output "/ {
+            line = $0
+            sub(/[[:space:]]+$/, "", line)
+            if (line !~ /\)$/) next
+            name = line
+            sub(/^.*\(/, "", name)
+            sub(/\)$/, "", name)
+            keep = (want == "" || name == want)
+            next
+        }
+        keep && /^[[:space:]]*Transform: / {
+            transform = $0
+            sub(/^[[:space:]]*Transform: /, "", transform)
+            print name, transform
+            exit
+        }
+    '
+}
+
+if [ -n "$output" ]; then
+    state=$(niri msg outputs) || exit 1
+else
+    state=$(niri msg focused-output) || exit 1
+    case "$state" in
+        *"No output is focused"*)
+            # Nothing focused (e.g. all windows closed): fall back to the first output.
+            state=$(niri msg outputs) || exit 1
+            ;;
+    esac
+fi
+
+parsed=$(printf '%s\n' "$state" | current_state "$output")
+if [ -z "$parsed" ]; then
+    if [ -n "$output" ]; then
+        echo "niri-screen-rotate: output not found, or not enabled: $output" >&2
+    else
+        echo "niri-screen-rotate: no connected output" >&2
+    fi
+    exit 1
+fi
+
+name=${parsed%% *}
+current=${parsed#* }
+
+if [ "$next" = next ]; then
+    case "$current" in
+        *flipped*) next=normal ;;
+        normal) next=90 ;;
+        90*) next=180 ;;
+        180*) next=270 ;;
+        270*) next=normal ;;
+        *) next=normal ;;
+    esac
+fi
+
+niri msg output "$name" transform "$next" >/dev/null || exit 1
+echo "$name: $current -> $next"
